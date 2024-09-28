@@ -17,7 +17,7 @@ export default function Home() {
           <li>
             Get started by editing <code>src/app/page.tsx</code>.
           </li>
-          <li>Dai!22</li>
+          <li>Dai!3</li>
         </ol>
 
         <div className={styles.ctas}>
