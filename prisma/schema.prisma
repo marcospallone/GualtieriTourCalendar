@@ -13,16 +13,16 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Viaggio {
+model Trip {
   id          Int      @id @default(autoincrement())
-  data        DateTime
-  destinazione String
-  veicolo     Veicolo  @relation(fields: [veicoloId], references: [id])
-  veicoloId   Int
+  date        DateTime
+  destination String
+  vehicle     Vehicle  @relation(fields: [vehicleId], references: [id])
+  vehicleId   Int
 }
 
-model Veicolo {
+model Vehicle {
   id          Int      @id @default(autoincrement())
-  nome        String
-  viaggi      Viaggio[]
+  name        String
+  trips       Trip[]
 }
