@@ -10,6 +10,7 @@ const theme = createTheme({
       main: '#dc004e', 
     },
   },
+  spacing: (factor:number) => `${factor / 16}rem`
 });
 
 export default theme;
