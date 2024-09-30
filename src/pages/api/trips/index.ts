@@ -5,10 +5,10 @@ const prisma = new PrismaClient();
 export default async function handler(req: any, res: any) {
   if (req.method === 'GET') {
     try {
-      const trips = await prisma.vehicle.findMany({
-        include: {
-
-        },
+      const trips = await prisma.trip.findMany({
+        // include: {
+        //   vehicle: true
+        // },
       });
       res.status(200).json(trips);
     } catch (error) {
@@ -16,12 +16,13 @@ export default async function handler(req: any, res: any) {
       res.status(500).json({ error: 'Errore nel recupero dei viaggi' });
     }
   } else if (req.method === 'POST') {
-    const { name, trips } = req.body;
+    const { date, tripTitle, vehicleName } = req.body;
     try {
-      const trip = await prisma.vehicle.create({
+      const trip = await prisma.trip.create({
         data: {
-          name,
-          trips
+          date: new Date(date),
+          tripTitle,
+          vehicleName
         },
       });
       res.status(201).json(trip);

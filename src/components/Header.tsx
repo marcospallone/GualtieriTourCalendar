@@ -12,8 +12,9 @@ import {
 import React from "react";
 import MenuIcon from "@mui/icons-material/Menu";
 import theme from "@/theme/theme";
+import { useRouter } from "next/router";
 
-const pages = [
+const sections = [
   {
     label: "Viaggi",
     url: "/",
@@ -28,23 +29,19 @@ function Header() {
   const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(
     null
   );
-  const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(
-    null
-  );
+  const router = useRouter();
 
   const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorElNav(event.currentTarget);
-  };
-  const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorElUser(event.currentTarget);
   };
 
   const handleCloseNavMenu = () => {
     setAnchorElNav(null);
   };
-
-  const handleCloseUserMenu = () => {
-    setAnchorElUser(null);
+  
+  const handleClickNavMenu = (url:string) => {
+    setAnchorElNav(null);
+    router.push(url)
   };
 
   return (
@@ -54,7 +51,12 @@ function Header() {
         sx={{ padding: `${theme.spacing(8)} !important` }}
       >
         <Toolbar disableGutters>
-          <img src={"/images/Gualtieri-Tour-Logo-300.jpg"} />
+          <Box display={'flex'}>
+            <img
+              src={"/images/Gualtieri-Tour-Logo-300.jpg"}
+              alt="Gualtieri Tour Logo"
+            />
+          </Box>
 
           <Box sx={{ flexGrow: 1, display: { xs: "flex", md: "none" } }}>
             <IconButton
@@ -83,21 +85,23 @@ function Header() {
               onClose={handleCloseNavMenu}
               sx={{ display: { xs: "block", md: "none" } }}
             >
-              {pages.map((page, index) => (
-                <MenuItem key={index} onClick={handleCloseNavMenu}>
-                  <Typography sx={{ textAlign: "center" }}>{page.label}</Typography>
+              {sections.map((section, index) => (
+                <MenuItem key={index} onClick={() => handleClickNavMenu(section.url)}>
+                  <Typography sx={{ textAlign: "center" }}>
+                    {section.label}
+                  </Typography>
                 </MenuItem>
               ))}
             </Menu>
           </Box>
           <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
-            {pages.map((page, index) => (
+            {sections.map((section, index) => (
               <Button
                 key={index}
-                onClick={handleCloseNavMenu}
+                href={section.url}
                 sx={{ my: 2, color: "white", display: "block" }}
               >
-                {page.label}
+                {section.label}
               </Button>
             ))}
           </Box>

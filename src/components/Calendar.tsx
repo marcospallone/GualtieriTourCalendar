@@ -7,8 +7,8 @@ import { useEffect, useState } from "react";
 interface Trip {
   id: number;
   date: string;
-  destination: string;
-  vehicle: any;
+  tripTitle: string;
+  vehicleName: any;
 }
 
 const Calendar: React.FC = () => {
@@ -19,13 +19,12 @@ const Calendar: React.FC = () => {
       try {
         const response = await fetch("/api/trips");
         if (!response.ok) {
-            console.log(response)
           throw new Error("Errore durante il recupero dei viaggi");
         }
         const data: Trip[] = await response.json();
         const formattedEvents = data.map((trip) => ({
           id: trip.id.toString(),
-          title: trip.destination + " - " + trip.vehicle?.nome,
+          title: trip.tripTitle + " - " + trip.vehicleName,
           start: trip.date,
         }));
 
@@ -34,13 +33,8 @@ const Calendar: React.FC = () => {
         console.error(error);
       }
     };
-
     fetchTrips();
   }, []);
-
-  useEffect(() => {
-    console.log(trips);
-  }, [trips]);
 
 
   return (

@@ -3,3 +3,8 @@
 .main-box{
     padding: toRem(16);
 }
+
+.MuiButton-root{
+    padding: 0 !important;
+    display: flex;
+}
