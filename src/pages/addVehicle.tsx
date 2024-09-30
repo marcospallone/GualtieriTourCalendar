@@ -1,31 +1,26 @@
-import { Box, Button } from "@mui/material";
+import { Box, Button, TextField } from "@mui/material";
 import * as React from "react";
 import Calendar from "@/components/Calendar";
 import AddIcon from "@mui/icons-material/Add";
 import theme from "@/theme/theme";
 import { useState } from "react";
 
-const AddTrip: React.FC = () => {
-  const [date, setDate] = useState<string>("20/07/2024");
-  const [destination, setDestination] = useState<string>("dest");
-  const [vehicleId, setVehicleId] = useState<number>(0);
+const AddVehicle: React.FC = () => {
+  const [name, setName] = useState<string>("");
+  const [trips, setTrips] = useState<[]>([]);
 
-  const handleSaveTrip = async () => {
+  const handleSaveVehicle = async () => {
     try {
-      const response = await fetch("/api/trips", {
+      const response = await fetch("/api/vehicles", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          date,
-          destination,
-          // vehicleId,
+          name,
+          trips,
         }),
       });
-
-      console.log(response)
-
       if (response.ok) {
         const trip = await response.json();
         alert(`Viaggio creato con successo: ${trip.destination}`);
@@ -52,13 +47,16 @@ const AddTrip: React.FC = () => {
         <Button
           sx={{ color: "#fff" }}
           startIcon={<AddIcon />}
-          onClick={handleSaveTrip}
+          onClick={handleSaveVehicle}
         >
           Salva
         </Button>
+      </Box>
+      <Box>
+        <TextField label="Nome" variant="outlined" />
       </Box>
     </Box>
   );
 };
 
-export default AddTrip;
+export default AddVehicle;

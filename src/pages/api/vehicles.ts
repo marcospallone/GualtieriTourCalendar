@@ -5,9 +5,9 @@ const prisma = new PrismaClient();
 export default async function handler(req: any, res: any) {
   if (req.method === 'GET') {
     try {
-      const trips = await prisma.trip.findMany({
+      const trips = await prisma.vehicle.findMany({
         include: {
-          vehicle: true
+
         },
       });
       res.status(200).json(trips);
@@ -15,24 +15,19 @@ export default async function handler(req: any, res: any) {
       console.error(error);
       res.status(500).json({ error: 'Errore nel recupero dei viaggi' });
     }
-  } else {
-    res.status(405).json({ error: 'Metodo non consentito' });
-  }
-  
-  if (req.method === 'POST') {
-    const { date, destination, vehicleId } = req.body;
-    console.log(date, destination, vehicleId)
+  } else if (req.method === 'POST') {
+    const { name, trips } = req.body;
     try {
-      const trip = await prisma.trip.create({
+      const trip = await prisma.vehicle.create({
         data: {
-          date: new Date(date),
-          destination,
-          vehicleId
+          name,
+          trips
         },
       });
       res.status(201).json(trip);
     } catch (error) {
-      res.status(500).json({ error: 'Errore nella creazione del viaggio' });
+      console.log(error)
+      res.status(500).json({ error: 'Errore nella creazione del viaggiox' });
     }
   } else {
     res.status(405).json({ error: 'Metodo non consentito' });

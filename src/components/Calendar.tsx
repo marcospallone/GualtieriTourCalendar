@@ -17,7 +17,7 @@ const Calendar: React.FC = () => {
   useEffect(() => {
     const fetchTrips = async () => {
       try {
-        const response = await fetch("/api/trip");
+        const response = await fetch("/api/trips");
         if (!response.ok) {
             console.log(response)
           throw new Error("Errore durante il recupero dei viaggi");
