@@ -7,14 +7,14 @@ export default async function handler(req: any, res: any) {
 
   if (req.method === 'DELETE') {
     try {
-      const vehicleId = parseInt(id as string);
-      if (isNaN(vehicleId)) {
-        return res.status(400).json({ error: 'ID del veicolo non valido' });
+      const driverId = parseInt(id as string);
+      if (isNaN(driverId)) {
+        return res.status(400).json({ error: 'ID dell\'autista non valido' });
       }
-      const deletedVehicle = await prisma.vehicle.delete({
-        where: { id: vehicleId },
+      const deletedDriver = await prisma.driver.delete({
+        where: { id: driverId },
       });
-      res.status(200).json(deletedVehicle);
+      res.status(200).json(deletedDriver);
     } catch (error) {
       console.error(error);
       res.status(500).json({ error: 'Errore durante l\'eliminazione del veicolo' });

@@ -9,7 +9,7 @@ import {
   Select,
   TextField,
 } from "@mui/material";
-import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
+import { DatePicker, DateTimePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { Dayjs } from "dayjs";
 import * as React from "react";
@@ -23,14 +23,22 @@ interface Vehicle {
   name: string;
 }
 
+interface Driver {
+  id: number;
+  name: string;
+}
+
 const AddTrip: React.FC = () => {
   const [date, setDate] = useState<Dayjs>();
   const [tripTitle, setTripTitle] = useState<string>("");
+  const [driverName, setDriverName] = useState<string>("");
   const [vehicleName, setVehicleName] = useState<string>("");
+  const [drivers, setDrivers] = useState<any[]>([]);
   const [vehicles, setVehicles] = useState<any[]>([]);
 
   useEffect(() => {
     fetchVehicles();
+    fetchDrivers();
   }, []);
 
   const fetchVehicles = async () => {
@@ -50,6 +58,23 @@ const AddTrip: React.FC = () => {
     }
   };
 
+  const fetchDrivers = async () => {
+    try {
+      const response = await fetch("/api/drivers");
+      if (!response.ok) {
+        throw new Error("Errore durante il recupero degli autisti");
+      }
+      const data: Driver[] = await response.json();
+      const formattedDrivers = data.map((driver) => ({
+        id: driver.id.toString(),
+        name: driver.name,
+      }));
+      setDrivers(formattedDrivers);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   const handleSaveTrip = async () => {
     try {
       const response = await fetch("/api/trips", {
@@ -60,7 +85,8 @@ const AddTrip: React.FC = () => {
         body: JSON.stringify({
           date,
           tripTitle,
-          vehicleName
+          vehicleName,
+          driverName
         }),
       });
       if (response.ok) {
@@ -80,9 +106,9 @@ const AddTrip: React.FC = () => {
     <Box className={"main-box"}>
       <Box>
         <Box>
-          <FormControl>
+          <FormControl fullWidth>
             <TextField
-              label="Viaggio"
+              label="Descrizione"
               variant="outlined"
               value={tripTitle}
               onChange={(event) => setTripTitle(event?.target?.value)}
@@ -90,7 +116,7 @@ const AddTrip: React.FC = () => {
           </FormControl>
         </Box>
         <Box>
-          <FormControl>
+          <FormControl fullWidth>
             <LocalizationProvider
               dateAdapter={AdapterDayjs}
               adapterLocale="it"
@@ -98,12 +124,12 @@ const AddTrip: React.FC = () => {
                 itIT.components.MuiLocalizationProvider.defaultProps.localeText
               }
             >
-              <DatePicker
+              <DateTimePicker
                 label={"Data"}
                 value={date}
                 onChange={(date) => (date ? setDate(date) : null)}
-                format="dddd - DD/MM/YYYY"
-                views={["day", "month", "year"]}
+                format="dddd - DD/MM/YYYY - hh:mm"
+                views={["day", "month", "year", "hours", "minutes"]}
               />
             </LocalizationProvider>
           </FormControl>
@@ -122,6 +148,28 @@ const AddTrip: React.FC = () => {
                 vehicles.map((vehicle, index) => (
                   <MenuItem key={index} value={vehicle.name}>
                     {vehicle.name}
+                  </MenuItem>
+                ))
+              ) : (
+                <MenuItem value={""}>{"Nessun veicolo presente"}</MenuItem>
+              )}
+            </Select>
+          </FormControl>
+        </Box>
+        <Box>
+          <FormControl fullWidth>
+            <InputLabel id="select-driver-label">Autista</InputLabel>
+            <Select
+              labelId="select-driver-label"
+              id="select-driver-label"
+              value={driverName}
+              label="Autista"
+              onChange={(event) => setDriverName(event?.target?.value)}
+            >
+              {drivers.length > 0 ? (
+                drivers.map((driver, index) => (
+                  <MenuItem key={index} value={driver.name}>
+                    {driver.name}
                   </MenuItem>
                 ))
               ) : (

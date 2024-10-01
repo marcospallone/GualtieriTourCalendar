@@ -16,39 +16,39 @@ import CloseIcon from "@mui/icons-material/Close";
 import { useEffect, useMemo, useState } from "react";
 import DeleteIcon from "@mui/icons-material/Delete";
 
-interface Vehicle {
+interface Driver {
   id: number;
   name: string;
 }
 
-const Vehicles: React.FC = () => {
-  const [vehicles, setVehicles] = useState<any[]>([]);
+const Drivers: React.FC = () => {
+  const [drivers, setDrivers] = useState<any[]>([]);
   const [adding, setAdding] = useState(false);
-  const [vehicleName, setVehicleName] = useState("");
-  const handleNewVehicleClick = () => {
+  const [driverName, setDriverName] = useState("");
+  const handleNewDriverClick = () => {
     setAdding(true);
   };
 
-  const handleChangeVehicleName = (value: string) => {
-    setVehicleName(value);
+  const handleChangeDriverName = (value: string) => {
+    setDriverName(value);
   };
 
-  const handleSaveVehicleClick = async () => {
+  const handleSaveDriverClick = async () => {
     try {
-      const response = await fetch("/api/vehicles", {
+      const response = await fetch("/api/drivers", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          name: vehicleName,
+          name: driverName,
         }),
       });
       if (response.ok) {
-        const vehicle = await response.json();
-        if (vehicle) {
-          setVehicleName('');
-          fetchVehicles();
+        const driver = await response.json();
+        if (driver) {
+          setDriverName('')
+          fetchDrivers();
         }
       } else {
         const errorData = await response.json();
@@ -61,45 +61,45 @@ const Vehicles: React.FC = () => {
     setAdding(false);
   };
 
-  const fetchVehicles = async () => {
+  const fetchDrivers = async () => {
     try {
-      const response = await fetch("/api/vehicles");
+      const response = await fetch("/api/drivers");
       if (!response.ok) {
         throw new Error("Errore durante il recupero dei veicoli");
       }
-      const data: Vehicle[] = await response.json();
-      const formattedVehicles = data.map((vehicle) => ({
-        id: vehicle.id.toString(),
-        name: vehicle.name,
+      const data: Driver[] = await response.json();
+      const formattedDrivers = data.map((driver) => ({
+        id: driver.id.toString(),
+        name: driver.name,
       }));
-      setVehicles(formattedVehicles);
+      setDrivers(formattedDrivers);
     } catch (error) {
       console.error(error);
     }
   };
 
   const handleDeleteVehicle = async (id: number) => {
-    const conferma = confirm("Sei sicuro di voler eliminare questo veicolo?");
+    const conferma = confirm("Sei sicuro di voler eliminare questo autista?");
     if (!conferma) return;
     try {
-      const response = await fetch(`/api/vehicles/${id}`, {
+      const response = await fetch(`/api/drivers/${id}`, {
         method: "DELETE",
       });
       if (response.ok) {
-        fetchVehicles();
-        alert("Veicolo eliminato con successo");
+        fetchDrivers();
+        alert("Autista eliminato con successo");
       } else {
         const errorData = await response.json();
-        alert(`Errore nell'eliminazione del veicolo: ${errorData.error}`);
+        alert(`Errore nell'eliminazione dell'autista: ${errorData.error}`);
       }
     } catch (error) {
       console.error("Errore nella chiamata DELETE:", error);
-      alert("Errore durante l'eliminazione del veicolo. Riprova più tardi.");
+      alert("Errore durante l'eliminazione dell'autista. Riprova più tardi.");
     }
   };
 
   useMemo(() => {
-    fetchVehicles();
+    fetchDrivers();
   }, []);
 
   return (
@@ -111,9 +111,9 @@ const Vehicles: React.FC = () => {
               <TextField
                 label="Nome"
                 variant="outlined"
-                value={vehicleName}
+                value={driverName}
                 onChange={(event) =>
-                  handleChangeVehicleName(event?.target?.value)
+                  handleChangeDriverName(event?.target?.value)
                 }
               />
             </Box>
@@ -130,7 +130,7 @@ const Vehicles: React.FC = () => {
               <Button
                 sx={{ color: "#fff" }}
                 startIcon={<DoneIcon />}
-                onClick={handleSaveVehicleClick}
+                onClick={handleSaveDriverClick}
               >
                 Salva
               </Button>
@@ -167,28 +167,28 @@ const Vehicles: React.FC = () => {
           <Button
             sx={{ color: "#fff" }}
             startIcon={<AddIcon />}
-            onClick={handleNewVehicleClick}
+            onClick={handleNewDriverClick}
           >
-            Nuovo Veicolo
+            Nuovo Autista
           </Button>
         </Box>
       )}
       <Box>
         <List>
-          {vehicles?.map((vehicle, index) => (
+          {drivers?.map((driver, index) => (
             <ListItem
               key={index}
               secondaryAction={
                 <IconButton
                   edge="end"
                   aria-label="delete"
-                  onClick={() => handleDeleteVehicle(vehicle.id)}
+                  onClick={() => handleDeleteVehicle(driver.id)}
                 >
                   <DeleteIcon />
                 </IconButton>
               }
             >
-              <ListItemText primary={vehicle?.name} />
+              <ListItemText primary={driver?.name} />
             </ListItem>
           ))}
         </List>
@@ -197,4 +197,4 @@ const Vehicles: React.FC = () => {
   );
 };
 
-export default Vehicles;
+export default Drivers;

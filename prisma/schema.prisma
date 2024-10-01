@@ -18,9 +18,15 @@ model Trip {
   date            DateTime
   tripTitle       String
   vehicleName     String
+  driverName      String
 }
 
 model Vehicle {
+  id          Int      @id @default(autoincrement())
+  name        String
+}
+
+model Driver {
   id          Int      @id @default(autoincrement())
   name        String
 }

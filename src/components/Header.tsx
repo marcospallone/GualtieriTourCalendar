@@ -23,6 +23,10 @@ const sections = [
     label: "Veicoli",
     url: "/vehicles",
   },
+  {
+    label: "Autisti",
+    url: "/drivers",
+  }
 ];
 
 function Header() {
@@ -51,7 +55,7 @@ function Header() {
         sx={{ padding: `${theme.spacing(8)} !important` }}
       >
         <Toolbar disableGutters>
-          <Box display={'flex'}>
+          <Box display={'flex'} sx={{cursor: 'pointer'}} onClick={() => router.push('/')}>
             <img
               src={"/images/Gualtieri-Tour-Logo-300.jpg"}
               alt="Gualtieri Tour Logo"
