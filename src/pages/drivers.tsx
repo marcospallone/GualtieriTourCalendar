@@ -35,30 +35,34 @@ const Drivers: React.FC = () => {
 
   const handleSaveDriverClick = async () => {
     try {
-      const response = await fetch("/api/drivers", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          name: driverName,
-        }),
-      });
-      if (response.ok) {
-        const driver = await response.json();
-        if (driver) {
-          setDriverName('')
-          fetchDrivers();
+      if (driverName) {
+        const response = await fetch("/api/drivers", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            name: driverName,
+          }),
+        });
+        if (response.ok) {
+          const driver = await response.json();
+          if (driver) {
+            setDriverName("");
+            fetchDrivers();
+            setAdding(false);
+          }
+        } else {
+          const errorData = await response.json();
+          alert(`Errore nella creazione del veicolo: ${errorData.error}`);
         }
       } else {
-        const errorData = await response.json();
-        alert(`Errore nella creazione del veicolo: ${errorData.error}`);
+        alert("Compila il campo nome!");
       }
     } catch (error) {
       console.error("Errore nella chiamata POST:", error);
       alert("Errore nella creazione del veicolo. Riprova più tardi.");
     }
-    setAdding(false);
   };
 
   const fetchDrivers = async () => {

@@ -35,30 +35,34 @@ const Vehicles: React.FC = () => {
 
   const handleSaveVehicleClick = async () => {
     try {
-      const response = await fetch("/api/vehicles", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          name: vehicleName,
-        }),
-      });
-      if (response.ok) {
-        const vehicle = await response.json();
-        if (vehicle) {
-          setVehicleName('');
-          fetchVehicles();
+      if (vehicleName) {
+        const response = await fetch("/api/vehicles", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            name: vehicleName,
+          }),
+        });
+        if (response.ok) {
+          const vehicle = await response.json();
+          if (vehicle) {
+            setVehicleName("");
+            fetchVehicles();
+            setAdding(false);
+          }
+        } else {
+          const errorData = await response.json();
+          alert(`Errore nella creazione del veicolo: ${errorData.error}`);
         }
       } else {
-        const errorData = await response.json();
-        alert(`Errore nella creazione del veicolo: ${errorData.error}`);
+        alert("Compila il campo nome!");
       }
     } catch (error) {
       console.error("Errore nella chiamata POST:", error);
       alert("Errore nella creazione del veicolo. Riprova più tardi.");
     }
-    setAdding(false);
   };
 
   const fetchVehicles = async () => {

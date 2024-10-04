@@ -57,7 +57,7 @@ function Header() {
         <Toolbar disableGutters>
           <Box display={'flex'} sx={{cursor: 'pointer'}} onClick={() => router.push('/')}>
             <img
-              src={"/images/Gualtieri-Tour-Logo-300.jpg"}
+              src={"/images/LogoGT.png"}
               alt="Gualtieri Tour Logo"
             />
           </Box>

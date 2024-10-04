@@ -1,7 +1,13 @@
 @import 'toRem';
 
+html, body, .MuiTypography-root, .MuiButton-root, .MuiInputBase-input, .MuiInputLabel-root {
+    font-family: 'Montserrat', sans-serif;
+    // color: #FFFFFF;
+}
+
 .main-box{
     padding: toRem(16);
+    height: 100vh;
 }
 
 .MuiButton-root{

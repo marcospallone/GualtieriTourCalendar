@@ -9,7 +9,11 @@ import {
   Select,
   TextField,
 } from "@mui/material";
-import { DatePicker, DateTimePicker, LocalizationProvider } from "@mui/x-date-pickers";
+import {
+  DatePicker,
+  DateTimePicker,
+  LocalizationProvider,
+} from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { Dayjs } from "dayjs";
 import * as React from "react";
@@ -17,6 +21,7 @@ import { useEffect, useState } from "react";
 import { itIT } from "@mui/x-date-pickers/locales";
 
 import "dayjs/locale/it";
+import { useRouter } from "next/router";
 
 interface Vehicle {
   id: number;
@@ -35,6 +40,8 @@ const AddTrip: React.FC = () => {
   const [vehicleName, setVehicleName] = useState<string>("");
   const [drivers, setDrivers] = useState<any[]>([]);
   const [vehicles, setVehicles] = useState<any[]>([]);
+
+  const router = useRouter();
 
   useEffect(() => {
     fetchVehicles();
@@ -77,24 +84,27 @@ const AddTrip: React.FC = () => {
 
   const handleSaveTrip = async () => {
     try {
-      const response = await fetch("/api/trips", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          date,
-          tripTitle,
-          vehicleName,
-          driverName
-        }),
-      });
-      if (response.ok) {
-        const trip = await response.json();
-        alert(`Viaggio creato con successo: ${trip.tripTitle}`);
+      if (date && tripTitle) {
+        const response = await fetch("/api/trips", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            date,
+            tripTitle,
+            vehicleName,
+            driverName,
+          }),
+        });
+        if (response.ok) {
+          router.push('/')
+        } else {
+          const errorData = await response.json();
+          alert(`Errore nella creazione del viaggio: ${errorData.error}`);
+        }
       } else {
-        const errorData = await response.json();
-        alert(`Errore nella creazione del viaggio: ${errorData.error}`);
+        alert("Compila i campi descrizione e data!");
       }
     } catch (error) {
       console.error("Errore nella chiamata POST:", error);
@@ -130,6 +140,16 @@ const AddTrip: React.FC = () => {
                 onChange={(date) => (date ? setDate(date) : null)}
                 format="dddd - DD/MM/YYYY - hh:mm"
                 views={["day", "month", "year", "hours", "minutes"]}
+                slots={{
+                  textField: TextField,
+                }}
+                slotProps={{
+                  textField: {
+                    inputProps: {
+                      readOnly: true
+                    },
+                  },
+                }}
               />
             </LocalizationProvider>
           </FormControl>

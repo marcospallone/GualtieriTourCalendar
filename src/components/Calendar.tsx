@@ -2,6 +2,7 @@ import FullCalendar from "@fullcalendar/react";
 import { Box } from "@mui/material";
 import * as React from "react";
 import dayGridPlugin from "@fullcalendar/daygrid";
+import timeGridPlugin from "@fullcalendar/timegrid";
 import { useEffect, useState } from "react";
 import itLocale from "@fullcalendar/core/locales/it";
 import interactionPlugin from "@fullcalendar/interaction";
@@ -60,7 +61,7 @@ const Calendar: React.FC = () => {
     <Box>
       <FullCalendar
         locale={itLocale}
-        plugins={[dayGridPlugin, interactionPlugin]}
+        plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
         initialView="dayGridMonth"
         events={trips}
         eventClick={handleEventClick}
