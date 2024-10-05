@@ -3,7 +3,7 @@ import { Box, Button } from "@mui/material";
 import * as React from "react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
-import Calendar from "@/components/Calendar";
+import Calendar from "@/components/Calendar/Calendar";
 import AddIcon from "@mui/icons-material/Add";
 import theme from "@/theme/theme";
 import { useRouter } from "next/router";

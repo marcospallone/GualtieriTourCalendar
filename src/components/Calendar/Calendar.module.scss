@@ -1,0 +1,10 @@
+@import '../../styles/toRem';
+
+.modal {
+  padding: toRem(16);
+  width: 40%;
+  margin: auto;
+  margin-top: 10%;
+  background-color: brown;
+  height: fit-content;
+}
