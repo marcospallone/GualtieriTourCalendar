@@ -193,7 +193,7 @@ const AddTrip: React.FC = () => {
                   </MenuItem>
                 ))
               ) : (
-                <MenuItem value={""}>{"Nessun veicolo presente"}</MenuItem>
+                <MenuItem value={""}>{"Nessun autista presente"}</MenuItem>
               )}
             </Select>
           </FormControl>
