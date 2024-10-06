@@ -14,6 +14,8 @@ export default async function handler(req: any, res: any) {
     } catch (error) {
       console.error(error);
       res.status(500).json({ error: 'Errore nel recupero dei viaggi' });
+    } finally {
+      await prisma.$disconnect();
     }
   } else if (req.method === 'POST') {
     const { name } = req.body;
@@ -27,6 +29,8 @@ export default async function handler(req: any, res: any) {
     } catch (error) {
       console.log(error)
       res.status(500).json({ error: 'Errore nella creazione del viaggiox' });
+    } finally {
+      await prisma.$disconnect();
     }
   } else {
     res.status(405).json({ error: 'Metodo non consentito' });

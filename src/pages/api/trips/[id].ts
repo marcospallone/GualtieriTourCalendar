@@ -32,6 +32,8 @@ export default async function handler(
     } catch (error) {
       console.error(error);
       res.status(500).json({ error: "Errore durante la modifica del viaggio" });
+    } finally {
+      await prisma.$disconnect();
     }
   } else if (req.method === "DELETE") {
     try {
@@ -50,7 +52,9 @@ export default async function handler(
       res
         .status(500)
         .json({ error: "Errore durante l'eliminazione del viaggio" });
-    }
+    } finally {
+        await prisma.$disconnect();
+      }
   } else {
     res.setHeader("Allow", ["DELETE"]);
     res.status(405).end(`Metodo ${req.method} non consentito`);

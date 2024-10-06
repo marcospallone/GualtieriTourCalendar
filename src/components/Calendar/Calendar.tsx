@@ -36,6 +36,8 @@ import "dayjs/locale/it";
 import dayjs from "dayjs";
 import AddIcon from "@mui/icons-material/Add";
 import { useRouter } from "next/router";
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
 
 interface Trip {
   id: number;
@@ -260,29 +262,41 @@ const Calendar: React.FC = () => {
   };
 
   const handleEventClick = (info: any) => {
-    console.log(info.event);
-    const formattedDay = new Intl.DateTimeFormat("it-IT", {
-      day: "2-digit",
-      month: "long",
-      year: "numeric",
-    }).format(info.event.start);
+    console.log(info);
+    if (isMobile) {
+      let event = {
+        id: info.id,
+        title: info.title,
+        date: dayjs(info.start),
+        driverName: info.driverName,
+        vehicleName: info.vehicleName,
+      };
+      setEventInModal(event);
+      setModalOpen(true);
+    } else {
+      const formattedDay = new Intl.DateTimeFormat("it-IT", {
+        day: "2-digit",
+        month: "long",
+        year: "numeric",
+      }).format(info.event.start);
 
-    const formattedTime = new Intl.DateTimeFormat("it-IT", {
-      hour: "2-digit",
-      minute: "2-digit",
-      hour12: false,
-    }).format(info.event.start);
-    const formattedDate = `${formattedDay} - ${formattedTime}`;
-    let event = {
-      id: info.event.id,
-      title: info.event.title,
-      date: dayjs(info.event.start),
-      formattedDate: formattedDate,
-      driverName: info.event._def.extendedProps.driverName,
-      vehicleName: info.event._def.extendedProps.vehicleName,
-    };
-    setEventInModal(event);
-    setModalOpen(true);
+      const formattedTime = new Intl.DateTimeFormat("it-IT", {
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: false,
+      }).format(info.event.start);
+      const formattedDate = `${formattedDay} - ${formattedTime}`;
+      let event = {
+        id: info.event.id,
+        title: info.event.title,
+        date: dayjs(info.event.start),
+        formattedDate: formattedDate,
+        driverName: info.event._def.extendedProps.driverName,
+        vehicleName: info.event._def.extendedProps.vehicleName,
+      };
+      setEventInModal(event);
+      setModalOpen(true);
+    }
   };
 
   const handleCloseModal = () => {
@@ -334,6 +348,16 @@ const Calendar: React.FC = () => {
                     <Box>
                       <Typography>{trip.driverName}</Typography>
                     </Box>
+                    <Box>
+                      <IconButton onClick={() => handleEventClick(trip)}>
+                        <EditIcon />
+                      </IconButton>
+                    </Box>
+                    <Box>
+                      <IconButton>
+                        <DeleteIcon />
+                      </IconButton>
+                    </Box>
                   </Box>
                 </ListItem>
               );
@@ -343,7 +367,7 @@ const Calendar: React.FC = () => {
         <Box></Box>
       </Box>
       <Modal
-        className={styles.modal}
+        className={isMobile ? styles.mobileModal : styles.modal}
         open={modalOpen}
         onClose={handleCloseModal}
       >

@@ -18,6 +18,8 @@ export default async function handler(req: any, res: any) {
     } catch (error) {
       console.error(error);
       res.status(500).json({ error: 'Errore durante l\'eliminazione del veicolo' });
+    } finally {
+      await prisma.$disconnect();
     }
   } else {
     res.setHeader('Allow', ['DELETE']);

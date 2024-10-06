@@ -25,6 +25,8 @@ export default async function handler(req: any, res: any) {
     } catch (error) {
       console.log(error);
       res.status(500).json({ error: "Errore nella creazione del veicolo" });
+    } finally {
+      await prisma.$disconnect();
     }
   } else {
     res.status(405).json({ error: "Metodo non consentito" });
