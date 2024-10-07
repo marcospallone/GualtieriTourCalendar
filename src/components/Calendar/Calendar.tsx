@@ -3,7 +3,6 @@ import {
   Box,
   Button,
   Divider,
-  Fade,
   FormControl,
   IconButton,
   InputLabel,
@@ -18,24 +17,18 @@ import {
 } from "@mui/material";
 import * as React from "react";
 import dayGridPlugin from "@fullcalendar/daygrid";
-import timeGridPlugin from "@fullcalendar/timegrid";
 import { useEffect, useState } from "react";
 import itLocale from "@fullcalendar/core/locales/it";
 import interactionPlugin from "@fullcalendar/interaction";
-import listPlugin from "@fullcalendar/list";
 import theme from "@/theme/theme";
-import { formatDate } from "@fullcalendar/core";
 import styles from "./Calendar.module.scss";
 import CloseIcon from "@mui/icons-material/Close";
-import drivers from "@/pages/drivers";
-import vehicles from "@/pages/vehicles";
 import { LocalizationProvider, DateTimePicker } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { itIT } from "@mui/x-date-pickers/locales";
 import "dayjs/locale/it";
 import dayjs from "dayjs";
 import AddIcon from "@mui/icons-material/Add";
-import { useRouter } from "next/router";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 
@@ -62,11 +55,14 @@ const Calendar: React.FC = () => {
   const [dayTrips, setDayTrips] = useState<any[]>([]);
   const [showTripList, setShowTripList] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
-  const [eventInModal, setEventInModal] = useState<any>({});
+  const [idEventInModal, setIdEventInModal] = useState<any>({});
+  const [titleEventInModal, setTitleEventInModal] = useState<any>({});
+  const [dateEventInModal, setDateEventInModal] = useState<any>();
+  const [vehicleEventInModal, setVehicleEventInModal] = useState<string>("");
+  const [driverEventInModal, setDriverEventInModal] = useState<string>("");
   const [vehicles, setVehicles] = useState<any[]>([]);
   const [drivers, setDrivers] = useState<any[]>([]);
-
-  const router = useRouter();
+  const [actualDay, setActualDay] = useState<any>();
 
   const isMobile = useMediaQuery(theme.breakpoints.down("lg"));
 
@@ -134,23 +130,30 @@ const Calendar: React.FC = () => {
     }
   };
 
+  useEffect(() => {
+    console.log(actualDay);
+  }, [actualDay])
+
   const handleSaveTrip = async () => {
     try {
-      const response = await fetch(`/api/trips/${eventInModal?.id}`, {
+      const response = await fetch(`/api/trips/${idEventInModal}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          date: eventInModal?.date,
-          tripTitle: eventInModal?.title,
-          vehicleName: eventInModal?.vehicleName,
-          driverName: eventInModal?.driverName,
+          date: dateEventInModal,
+          tripTitle: titleEventInModal,
+          vehicleName: vehicleEventInModal,
+          driverName: driverEventInModal,
         }),
       });
 
       if (response.ok) {
-        fetchTrips();
+        await fetchTrips();
+        if (isMobile) {
+          await getDayTrips(actualDay);
+        }
         setModalOpen(false);
       } else {
         const errorData = await response.json();
@@ -162,17 +165,23 @@ const Calendar: React.FC = () => {
     }
   };
 
-  const handleDeleteTrip = async () => {
+  const handleDeleteTrip = async (id: any, date: any) => {
     const conferma = confirm("Sei sicuro di voler eliminare questo viaggio?");
     if (!conferma) return;
 
     try {
-      const response = await fetch(`/api/trips/${eventInModal?.id}`, {
-        method: "DELETE",
-      });
+      const response = await fetch(
+        `/api/trips/${isMobile ? id : idEventInModal}`,
+        {
+          method: "DELETE",
+        }
+      );
 
       if (response.ok) {
-        fetchTrips();
+        await fetchTrips();
+        if (isMobile) {
+          await getDayTrips(actualDay);
+        }
         setModalOpen(false);
       } else {
         const errorData = await response.json();
@@ -184,12 +193,13 @@ const Calendar: React.FC = () => {
     }
   };
 
-  const handleCellClick = (info: any) => {
+  const getDayTrips = (date: any) => {
+    const validDate = new Date(date)
     const dateStr = new Intl.DateTimeFormat("it-IT", {
       year: "numeric",
       month: "2-digit",
       day: "2-digit",
-    }).format(info.date);
+    }).format(validDate);
     if (isMobile) {
       const eventsOnDay = trips.filter((event) => {
         const eventDateStr = new Intl.DateTimeFormat("it-IT", {
@@ -201,8 +211,13 @@ const Calendar: React.FC = () => {
       });
       console.log(eventsOnDay);
       setDayTrips(eventsOnDay);
-      setShowTripList(true);
     }
+  };
+
+  const handleCellClick = (info: any) => {
+    setActualDay(info.date);
+    getDayTrips(info.date);
+    setShowTripList(true);
   };
 
   const renderEventContent = (eventInfo: any) => {
@@ -237,11 +252,17 @@ const Calendar: React.FC = () => {
         return eventDateStr === dateStr;
       });
       const eventCount =
-        eventsOnDay.length > 0 ? `${eventsOnDay.length} eventi` : "";
+        eventsOnDay.length > 0
+          ? eventsOnDay.length == 1
+            ? `${eventsOnDay.length} viaggio`
+            : `${eventsOnDay.length} viaggi`
+          : "";
 
       return (
         <Box>
-          <Box>{info.dayNumberText}</Box>
+          <Box sx={{ textAlign: "right" }}>
+            <Typography component={"span"}>{info.dayNumberText}</Typography>
+          </Box>
           {eventCount && (
             <Box
               className="event-count"
@@ -263,40 +284,23 @@ const Calendar: React.FC = () => {
 
   const handleEventClick = (info: any) => {
     console.log(info);
-    if (isMobile) {
-      let event = {
-        id: info.id,
-        title: info.title,
-        date: dayjs(info.start),
-        driverName: info.driverName,
-        vehicleName: info.vehicleName,
-      };
-      setEventInModal(event);
-      setModalOpen(true);
-    } else {
-      const formattedDay = new Intl.DateTimeFormat("it-IT", {
-        day: "2-digit",
-        month: "long",
-        year: "numeric",
-      }).format(info.event.start);
-
-      const formattedTime = new Intl.DateTimeFormat("it-IT", {
-        hour: "2-digit",
-        minute: "2-digit",
-        hour12: false,
-      }).format(info.event.start);
-      const formattedDate = `${formattedDay} - ${formattedTime}`;
-      let event = {
-        id: info.event.id,
-        title: info.event.title,
-        date: dayjs(info.event.start),
-        formattedDate: formattedDate,
-        driverName: info.event._def.extendedProps.driverName,
-        vehicleName: info.event._def.extendedProps.vehicleName,
-      };
-      setEventInModal(event);
-      setModalOpen(true);
+    if(isMobile){
+      setIdEventInModal(info.id);
+      setTitleEventInModal(info.title);
+      setDateEventInModal(dayjs(info.start));
+      setVehicleEventInModal(info.vehicleName);
+      setDriverEventInModal(info.driverName);
+      setActualDay(info.start)
     }
+    else{
+      setIdEventInModal(info.event.id);
+      setTitleEventInModal(info.event.title);
+      setDateEventInModal(dayjs(info.event.start));
+      setVehicleEventInModal(info.event.extendedProps.vehicleName);
+      setDriverEventInModal(info.event.extendedProps.driverName);
+      setActualDay(info.event.start)
+    }
+    setModalOpen(true);
   };
 
   const handleCloseModal = () => {
@@ -354,7 +358,9 @@ const Calendar: React.FC = () => {
                       </IconButton>
                     </Box>
                     <Box>
-                      <IconButton>
+                      <IconButton
+                        onClick={() => handleDeleteTrip(trip.id, trip.date)}
+                      >
                         <DeleteIcon />
                       </IconButton>
                     </Box>
@@ -383,9 +389,9 @@ const Calendar: React.FC = () => {
                 <TextField
                   label="Descrizione"
                   variant="outlined"
-                  value={eventInModal?.title}
+                  value={titleEventInModal}
                   onChange={(event) =>
-                    (eventInModal.title = event?.target?.value)
+                    setTitleEventInModal(event?.target?.value)
                   }
                 />
               </FormControl>
@@ -402,9 +408,9 @@ const Calendar: React.FC = () => {
                 >
                   <DateTimePicker
                     label={"Data"}
-                    value={eventInModal?.date}
+                    value={dateEventInModal}
                     onChange={(date) =>
-                      date ? (eventInModal.date = date) : null
+                      date ? setDateEventInModal(date) : null
                     }
                     format="dddd - DD/MM/YYYY - hh:mm"
                     views={["day", "month", "year", "hours", "minutes"]}
@@ -428,10 +434,10 @@ const Calendar: React.FC = () => {
                 <Select
                   labelId="select-vehicle-label"
                   id="select-vehicle-label"
-                  value={eventInModal?.vehicleName}
+                  value={vehicleEventInModal}
                   label="Veicolo"
                   onChange={(event) =>
-                    (eventInModal.vehicleName = event?.target?.value)
+                    setVehicleEventInModal(event?.target?.value)
                   }
                 >
                   {vehicles.length > 0 ? (
@@ -441,7 +447,9 @@ const Calendar: React.FC = () => {
                       </MenuItem>
                     ))
                   ) : (
-                    <MenuItem value={""}>{"Nessun veicolo presente"}</MenuItem>
+                    <MenuItem value={""}>
+                      {"Nessun veicolo selezionabile"}
+                    </MenuItem>
                   )}
                 </Select>
               </FormControl>
@@ -452,10 +460,10 @@ const Calendar: React.FC = () => {
                 <Select
                   labelId="select-driver-label"
                   id="select-driver-label"
-                  value={eventInModal?.driverName}
+                  value={driverEventInModal}
                   label="Autista"
                   onChange={(event) =>
-                    (eventInModal.driverName = event?.target?.value)
+                    setDriverEventInModal(event?.target?.value)
                   }
                 >
                   {drivers.length > 0 ? (
@@ -465,7 +473,9 @@ const Calendar: React.FC = () => {
                       </MenuItem>
                     ))
                   ) : (
-                    <MenuItem value={""}>{"Nessun autista presente"}</MenuItem>
+                    <MenuItem value={""}>
+                      {"Nessun autista selezionabile"}
+                    </MenuItem>
                   )}
                 </Select>
               </FormControl>
@@ -487,34 +497,38 @@ const Calendar: React.FC = () => {
                 Salva
               </Button>
             </Box>
-            <Box>
-              <Divider textAlign="center">
-                <Typography
-                  variant="body1"
-                  component="span"
-                  sx={{ padding: "1rem" }}
+            {!isMobile && (
+              <>
+                <Box>
+                  <Divider textAlign="center">
+                    <Typography
+                      variant="body1"
+                      component="span"
+                      sx={{ padding: "1rem" }}
+                    >
+                      oppure
+                    </Typography>
+                  </Divider>
+                </Box>
+                <Box
+                  sx={{
+                    width: "fit-content",
+                    borderRadius: theme.spacing(12),
+                    backgroundColor: "red",
+                    padding: `${theme.spacing(10)} ${theme.spacing(16)}`,
+                    display: "flex",
+                  }}
                 >
-                  oppure
-                </Typography>
-              </Divider>
-            </Box>
-            <Box
-              sx={{
-                width: "fit-content",
-                borderRadius: theme.spacing(12),
-                backgroundColor: "red",
-                padding: `${theme.spacing(10)} ${theme.spacing(16)}`,
-                display: "flex",
-              }}
-            >
-              <Button
-                sx={{ color: "#fff" }}
-                startIcon={<AddIcon />}
-                onClick={handleDeleteTrip}
-              >
-                Elimina viaggio
-              </Button>
-            </Box>
+                  <Button
+                    sx={{ color: "#fff" }}
+                    startIcon={<AddIcon />}
+                    onClick={() => handleDeleteTrip(null, null)}
+                  >
+                    Elimina viaggio
+                  </Button>
+                </Box>
+              </>
+            )}
           </Box>
         </Box>
       </Modal>

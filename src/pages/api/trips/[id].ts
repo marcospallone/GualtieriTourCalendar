@@ -56,7 +56,7 @@ export default async function handler(
         await prisma.$disconnect();
       }
   } else {
-    res.setHeader("Allow", ["DELETE"]);
+    res.setHeader("Allow", ["PUT", "DELETE"]);
     res.status(405).end(`Metodo ${req.method} non consentito`);
   }
 }
