@@ -87,13 +87,15 @@ const Calendar: React.FC = () => {
         driverName: trip.driverName,
       }));
       setTrips(formattedEvents);
+      return formattedEvents;
     } catch (error) {
       console.error(error);
     }
   };
 
   useEffect(() => {
-    console.log(trips);
+    const date = actualDay || new Date()
+    getDayTrips(date)
   }, [trips]);
 
   const fetchVehicles = async () => {
@@ -130,10 +132,6 @@ const Calendar: React.FC = () => {
     }
   };
 
-  useEffect(() => {
-    console.log(actualDay);
-  }, [actualDay]);
-
   const handleSaveTrip = async () => {
     try {
       const response = await fetch(`/api/trips/${idEventInModal}`, {
@@ -151,12 +149,6 @@ const Calendar: React.FC = () => {
 
       if (response.ok) {
         await fetchTrips();
-        if (isMobile) {
-          let info = {
-            date: actualDay,
-          };
-          handleCellClick(info);
-        }
         setModalOpen(false);
       } else {
         const errorData = await response.json();
@@ -215,7 +207,6 @@ const Calendar: React.FC = () => {
         }).format(new Date(event.start));
         return eventDateStr === dateStr;
       });
-      console.log(eventsOnDay);
       setDayTrips(eventsOnDay);
     }
   };
@@ -242,7 +233,6 @@ const Calendar: React.FC = () => {
   };
 
   const handleCellContent = (info: any) => {
-    console.log(info);
     if (isMobile) {
       const dateStr = new Intl.DateTimeFormat("it-IT", {
         year: "numeric",
@@ -289,7 +279,6 @@ const Calendar: React.FC = () => {
   };
 
   const handleEventClick = (info: any) => {
-    console.log(info);
     if (isMobile) {
       setIdEventInModal(info.id);
       setTitleEventInModal(info.title);
