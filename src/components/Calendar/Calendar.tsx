@@ -132,7 +132,7 @@ const Calendar: React.FC = () => {
 
   useEffect(() => {
     console.log(actualDay);
-  }, [actualDay])
+  }, [actualDay]);
 
   const handleSaveTrip = async () => {
     try {
@@ -152,7 +152,10 @@ const Calendar: React.FC = () => {
       if (response.ok) {
         await fetchTrips();
         if (isMobile) {
-          await getDayTrips(actualDay);
+          let info = {
+            date: actualDay,
+          };
+          handleCellClick(info);
         }
         setModalOpen(false);
       } else {
@@ -180,7 +183,10 @@ const Calendar: React.FC = () => {
       if (response.ok) {
         await fetchTrips();
         if (isMobile) {
-          await getDayTrips(actualDay);
+          let info = {
+            date: actualDay,
+          };
+          handleCellClick(info);
         }
         setModalOpen(false);
       } else {
@@ -194,7 +200,7 @@ const Calendar: React.FC = () => {
   };
 
   const getDayTrips = (date: any) => {
-    const validDate = new Date(date)
+    const validDate = new Date(date);
     const dateStr = new Intl.DateTimeFormat("it-IT", {
       year: "numeric",
       month: "2-digit",
@@ -284,21 +290,20 @@ const Calendar: React.FC = () => {
 
   const handleEventClick = (info: any) => {
     console.log(info);
-    if(isMobile){
+    if (isMobile) {
       setIdEventInModal(info.id);
       setTitleEventInModal(info.title);
       setDateEventInModal(dayjs(info.start));
       setVehicleEventInModal(info.vehicleName);
       setDriverEventInModal(info.driverName);
-      setActualDay(info.start)
-    }
-    else{
+      setActualDay(info.start);
+    } else {
       setIdEventInModal(info.event.id);
       setTitleEventInModal(info.event.title);
       setDateEventInModal(dayjs(info.event.start));
       setVehicleEventInModal(info.event.extendedProps.vehicleName);
       setDriverEventInModal(info.event.extendedProps.driverName);
-      setActualDay(info.event.start)
+      setActualDay(info.event.start);
     }
     setModalOpen(true);
   };
@@ -323,7 +328,7 @@ const Calendar: React.FC = () => {
             eventDisplay={isMobile ? "none" : undefined}
           />
         </Box>
-        {showTripList && (
+        {showTripList ? (
           <List>
             {dayTrips.map((trip, index) => {
               const validDate = new Date(trip.start);
@@ -369,7 +374,7 @@ const Calendar: React.FC = () => {
               );
             })}
           </List>
-        )}
+        ) : null }
         <Box></Box>
       </Box>
       <Modal
