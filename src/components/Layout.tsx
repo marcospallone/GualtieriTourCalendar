@@ -5,6 +5,8 @@ import Header from "./Header";
 import { Box, useMediaQuery } from "@mui/material";
 import theme from "@/theme/theme";
 import Sidebar from "./Sidebar";
+import Logo from "./Logo";
+import { useRouter } from "next/router";
 
 interface LayoutProps {
   children: ReactNode;
@@ -12,10 +14,12 @@ interface LayoutProps {
 
 const Layout: React.FC<LayoutProps> = ({ children }) => {
   const isMobile = useMediaQuery(theme.breakpoints.down('lg'));
+  const router = useRouter();
 
   return (
     <Box display={'flex'} flexDirection={isMobile ? 'column' : 'row'}>
-      {isMobile ? <Header /> : <Sidebar />}
+      {router.asPath.includes('/login') ? null : isMobile ? <Header /> : <Sidebar />}
+      {isMobile ? <Logo /> : null}
       <Container maxWidth="lg" sx={{ maxWidth: '100% !important'}}>{children}</Container>
     </Box>
   );

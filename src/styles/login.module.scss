@@ -1,0 +1,30 @@
+@import 'toRem';
+
+.login{
+    padding: toRem(16);
+    padding-top: 20%;
+    text-align: center;
+
+    .loginTitle{
+        font-weight: bold;
+        text-transform: uppercase;
+        margin-bottom: toRem(16);
+    }
+
+    .loginInput{
+        margin-bottom: toRem(12);
+    }
+
+    .loginSubmit{
+        margin-top: toRem(8);
+        display: flex;
+        justify-content: center;
+        width: 100%;
+        
+        > button{
+            padding: toRem(8) toRem(24) !important;
+            border: 1px solid #333333;
+            border-radius: toRem(12);
+        }
+    }
+}
