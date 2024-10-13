@@ -1,16 +1,33 @@
 @import 'toRem';
 
-html, body, .MuiTypography-root, .MuiButton-root, .MuiInputBase-input, .MuiInputLabel-root {
+html, body, .MuiTypography-root, .MuiButton-root, .MuiInputBase-input, .MuiInputLabel-root, .MuiBottomNavigationAction-label {
     font-family: 'Montserrat', sans-serif;
-    // color: #FFFFFF;
+}
+
+body{
+    color: #2C3E50;
+    background-color: #F4F6FF;
 }
 
 .main-box{
     padding: toRem(16);
-    height: 100vh;
 }
 
 .MuiButton-root{
-    padding: 0 !important;
     display: flex;
 }
+
+@media only screen and (max-width: 768px) {
+    .fc-daygrid-day-events {
+      display: none;
+    }
+
+    .fc-daygrid-day-top{
+        min-height: toRem(72);
+        
+
+        > a {
+            width: 100%;
+        }
+    }
+  }

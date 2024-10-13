@@ -10,6 +10,7 @@ import {
   ListItem,
   MenuItem,
   Modal,
+  Paper,
   Select,
   TextField,
   Typography,
@@ -94,8 +95,8 @@ const Calendar: React.FC = () => {
   };
 
   useEffect(() => {
-    const date = actualDay || new Date()
-    getDayTrips(date)
+    const date = actualDay || new Date();
+    getDayTrips(date);
   }, [trips]);
 
   const fetchVehicles = async () => {
@@ -211,9 +212,37 @@ const Calendar: React.FC = () => {
     }
   };
 
+  const [touchStartY, setTouchStartY] = useState(0);
+  const [translateY, setTranslateY] = useState(0);
+  const [isSwiping, setIsSwiping] = useState(false);
+
+  const handleTouchStart = (e: any) => {
+    setTouchStartY(e.touches[0].clientY);
+    setIsSwiping(true);
+  };
+
+  const handleTouchMove = (e: any) => {
+    const touchEndY = e.touches[0].clientY;
+    const swipeDistance = touchEndY - touchStartY;
+
+    if (swipeDistance > 0) {
+      setTranslateY(swipeDistance);
+    }
+  };
+
+  const handleTouchEnd = () => {
+    setIsSwiping(false);
+    if (translateY > 50) {
+      setShowTripList(false);
+    } else {
+      setTranslateY(0);
+    }
+  };
+
   const handleCellClick = (info: any) => {
     setActualDay(info.date);
     getDayTrips(info.date);
+    setTranslateY(0);
     setShowTripList(true);
   };
 
@@ -247,24 +276,33 @@ const Calendar: React.FC = () => {
         }).format(new Date(event.start));
         return eventDateStr === dateStr;
       });
-      const eventCount =
-        eventsOnDay.length > 0
-          ? eventsOnDay.length == 1
-            ? `${eventsOnDay.length} viaggio`
-            : `${eventsOnDay.length} viaggi`
-          : "";
+      const eventCount = eventsOnDay.length;
 
       return (
         <Box>
           <Box sx={{ textAlign: "right" }}>
             <Typography component={"span"}>{info.dayNumberText}</Typography>
           </Box>
-          {eventCount && (
+          {eventCount > 0 && (
             <Box
               className="event-count"
-              style={{ fontSize: "0.8em", color: "#ff5722" }}
+              sx={{
+                backgroundColor: "#EB8317",
+                color: "#10375C",
+                display: "flex",
+                justifyContent: "center",
+                padding: theme.spacing(4),
+                borderRadius: "30%",
+                marginTop: theme.spacing(6),
+              }}
             >
-              {eventCount}
+              <Typography
+                variant="button"
+                component={"span"}
+                fontWeight={"bold"}
+              >
+                {eventCount}
+              </Typography>
             </Box>
           )}
         </Box>
@@ -304,7 +342,7 @@ const Calendar: React.FC = () => {
   return (
     <>
       <Box sx={{ filter: modalOpen ? "blur(8px)" : "none" }}>
-        <Box>
+        <Box marginTop={theme.spacing(16)}>
           <FullCalendar
             locale={itLocale}
             plugins={[dayGridPlugin, interactionPlugin]}
@@ -315,55 +353,155 @@ const Calendar: React.FC = () => {
             eventContent={renderEventContent}
             dayCellContent={handleCellContent}
             eventDisplay={isMobile ? "none" : undefined}
+            headerToolbar={{
+              right: "prev,next",
+            }}
+            height={theme.spacing(459)}
+            fixedWeekCount={false}
           />
         </Box>
         {showTripList ? (
-          <List>
-            {dayTrips.map((trip, index) => {
-              const validDate = new Date(trip.start);
-              const formattedDay = new Intl.DateTimeFormat("it-IT", {
-                day: "2-digit",
-                month: "long",
-                year: "numeric",
-              }).format(validDate);
+          <>
+            <Paper
+              sx={{
+                position: "fixed",
+                bottom: 0,
+                left: 0,
+                right: 0,
+                padding: theme.spacing(16),
+                borderRadius: `${theme.spacing(16)} ${theme.spacing(16)} 0 0`,
+                transform: `translateY(${translateY}px)`,
+                transition: isSwiping ? "none" : "transform 0.3s ease-out",
+                zIndex: 1,
+              }}
+              elevation={4}
+              onTouchStart={handleTouchStart}
+              onTouchMove={handleTouchMove}
+              onTouchEnd={handleTouchEnd}
+            >
+              <Box display={"flex"} justifyContent={"flex-end"}>
+                <IconButton
+                  onClick={() => setShowTripList(false)}
+                  sx={{
+                    backgroundColor: "#F4F6FF",
+                    color: "#2C3E50",
+                    padding: `${theme.spacing(6)}`,
+                    borderRadius: "50%",
+                  }}
+                >
+                  <CloseIcon />
+                </IconButton>
+              </Box>
+              <Box>
+                <List disablePadding>
+                  {dayTrips.map((trip, index) => {
+                    const validDate = new Date(trip.start);
+                    const formattedDay = new Intl.DateTimeFormat("it-IT", {
+                      day: "2-digit",
+                      month: "long",
+                      year: "numeric",
+                    }).format(validDate);
 
-              const formattedTime = new Intl.DateTimeFormat("it-IT", {
-                hour: "2-digit",
-                minute: "2-digit",
-                hour12: false,
-              }).format(validDate);
-              const date = `${formattedDay} - ${formattedTime}`;
+                    const formattedTime = new Intl.DateTimeFormat("it-IT", {
+                      hour: "2-digit",
+                      minute: "2-digit",
+                      hour12: false,
+                    }).format(validDate);
+                    const date = `${formattedDay} - ${formattedTime}`;
 
-              return (
-                <ListItem key={index}>
-                  <Box>
-                    <Box>
-                      <Typography>{trip.title}</Typography>
-                    </Box>
-                    <Box>
-                      <Typography>{date}</Typography>
-                    </Box>
-                    <Box>
-                      <Typography>{trip.driverName}</Typography>
-                    </Box>
-                    <Box>
-                      <IconButton onClick={() => handleEventClick(trip)}>
-                        <EditIcon />
-                      </IconButton>
-                    </Box>
-                    <Box>
-                      <IconButton
-                        onClick={() => handleDeleteTrip(trip.id, trip.date)}
-                      >
-                        <DeleteIcon />
-                      </IconButton>
-                    </Box>
-                  </Box>
-                </ListItem>
-              );
-            })}
-          </List>
-        ) : null }
+                    return (
+                      <>
+                        <ListItem key={index}>
+                          <Box width={"100%"}>
+                            <Box>
+                              <Typography
+                                component={"span"}
+                                variant="body1"
+                                fontWeight={"bold"}
+                              >
+                                {trip.title}
+                              </Typography>
+                            </Box>
+                            <Box>
+                              <Typography
+                                component={"span"}
+                                variant="body1"
+                                fontWeight={"bold"}
+                              >
+                                Data:{" "}
+                              </Typography>
+                              <Typography component={"span"} variant="body1">
+                                {date}
+                              </Typography>
+                            </Box>
+                            <Box>
+                              {trip.driverName && (
+                                <Typography
+                                  component={"span"}
+                                  variant="body1"
+                                  fontWeight={"bold"}
+                                >
+                                  Autista:{" "}
+                                </Typography>
+                              )}
+                              <Typography component={"span"} variant="body1">
+                                {trip.driverName}
+                              </Typography>
+                            </Box>
+                            <Box
+                              display={"flex"}
+                              justifyContent={"center"}
+                              columnGap={theme.spacing(32)}
+                              marginTop={theme.spacing(12)}
+                            >
+                              <Box>
+                                <Button
+                                  onClick={() => handleEventClick(trip)}
+                                  endIcon={<EditIcon />}
+                                  sx={{
+                                    backgroundColor: "#F3C623",
+                                    color: "#fff",
+                                    padding: `${theme.spacing(
+                                      6
+                                    )} ${theme.spacing(12)}`,
+                                    borderRadius: theme.spacing(12),
+                                  }}
+                                >
+                                  Modifica
+                                </Button>
+                              </Box>
+                              <Box>
+                                <Button
+                                  onClick={() =>
+                                    handleDeleteTrip(trip.id, trip.date)
+                                  }
+                                  endIcon={<DeleteIcon />}
+                                  sx={{
+                                    backgroundColor: "#B8001F",
+                                    color: "#fff",
+                                    padding: `${theme.spacing(
+                                      6
+                                    )} ${theme.spacing(12)}`,
+                                    borderRadius: theme.spacing(12),
+                                  }}
+                                >
+                                  Elimina
+                                </Button>
+                              </Box>
+                            </Box>
+                          </Box>
+                        </ListItem>
+                        {index < dayTrips.length - 1 && (
+                          <Divider variant="middle" component="li" flexItem />
+                        )}
+                      </>
+                    );
+                  })}
+                </List>
+              </Box>
+            </Paper>
+          </>
+        ) : null}
         <Box></Box>
       </Box>
       <Modal

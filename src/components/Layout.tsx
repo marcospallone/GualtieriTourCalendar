@@ -1,7 +1,7 @@
 import * as React from "react";
 import { ReactNode } from "react";
 import Container from "@mui/material/Container";
-import Header from "./Header";
+import Navigation from "./Navigation";
 import { Box, useMediaQuery } from "@mui/material";
 import theme from "@/theme/theme";
 import Sidebar from "./Sidebar";
@@ -18,7 +18,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
 
   return (
     <Box display={'flex'} flexDirection={isMobile ? 'column' : 'row'}>
-      {router.asPath.includes('/login') ? null : isMobile ? <Header /> : <Sidebar />}
+      {router.asPath.includes('/login') ? null : isMobile ? <Navigation /> : <Sidebar />}
       {isMobile ? <Logo /> : null}
       <Container maxWidth="lg" sx={{ maxWidth: '100% !important'}}>{children}</Container>
     </Box>

@@ -2,8 +2,15 @@
 
 .login{
     padding: toRem(16);
-    padding-top: 20%;
+    padding-top: 15%;
     text-align: center;
+
+    .loginLogo{
+        display: flex;
+        cursor: pointer;
+        justify-content: center;
+        margin-bottom: toRem(32);
+    }
 
     .loginTitle{
         font-weight: bold;
@@ -23,8 +30,10 @@
         
         > button{
             padding: toRem(8) toRem(24) !important;
-            border: 1px solid #333333;
             border-radius: toRem(12);
+            color: #fff;
+            background-color: #10375C;
+            
         }
     }
 }

@@ -7,15 +7,19 @@ import {
   InputAdornment,
   TextField,
   Typography,
+  useMediaQuery,
 } from "@mui/material";
 import PersonIcon from "@mui/icons-material/Person";
 import KeyIcon from "@mui/icons-material/Key";
+import theme from "@/theme/theme";
 
 const Login = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const router = useRouter();
+
+  const isMobile = useMediaQuery(theme.breakpoints.down('lg'));
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -39,6 +43,15 @@ const Login = () => {
 
   return (
     <Box className={styles.login}>
+      {!isMobile && (
+        <Box
+        className={styles.loginLogo}
+          display={"flex"}
+          sx={{ cursor: "pointer", justifyContent: 'center' }}
+        >
+          <img src={"/images/LogoGT.png"} alt="Gualtieri Tour Logo" />
+        </Box>
+      )}
       <Typography className={styles.loginTitle} variant="h6" component={"h1"}>
         Login
       </Typography>
@@ -88,9 +101,7 @@ const Login = () => {
           />
         </Box>
         <Box className={styles.loginSubmit}>
-          <Button type="submit">
-            Login
-          </Button>
+          <Button type="submit">Login</Button>
         </Box>
       </form>
     </Box>
