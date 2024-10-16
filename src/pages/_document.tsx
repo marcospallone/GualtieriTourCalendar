@@ -9,9 +9,7 @@ export default class MyDocument extends Document {
     return (
       <Html lang="en">
         <Head>
-          {/* Meta tag per il colore del tema */}
           <meta name="theme-color" content={theme?.palette?.primary?.main} />
-          {/* Aggiungi font esterni (ad esempio Google Fonts) */}
           <link rel="preconnect" href="https://fonts.googleapis.com" />
           <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
           <link

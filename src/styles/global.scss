@@ -9,12 +9,22 @@ body{
     background-color: #F4F6FF;
 }
 
+.MuiTypography-root{
+    color: #2C3E50;
+}
+
 .main-box{
     padding: toRem(16);
 }
 
 .MuiButton-root{
     display: flex;
+}
+
+.fc-daygrid-event{
+    border: 0;
+    margin: toRem(2);
+    background-color: transparent;
 }
 
 @media only screen and (max-width: 768px) {

@@ -12,6 +12,7 @@ import {
 import PersonIcon from "@mui/icons-material/Person";
 import KeyIcon from "@mui/icons-material/Key";
 import theme from "@/theme/theme";
+import Logo from "@/components/Logo";
 
 const Login = () => {
   const [username, setUsername] = useState("");
@@ -49,7 +50,7 @@ const Login = () => {
           display={"flex"}
           sx={{ cursor: "pointer", justifyContent: 'center' }}
         >
-          <img src={"/images/LogoGT.png"} alt="Gualtieri Tour Logo" />
+          <Logo />
         </Box>
       )}
       <Typography className={styles.loginTitle} variant="h6" component={"h1"}>

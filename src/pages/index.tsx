@@ -17,7 +17,7 @@ const Home: React.FC = () => {
       >
         <Button
           sx={{
-            backgroundColor: "#EB8317",
+            backgroundColor: "#018749",
             color: "#fff",
             padding: `${theme.spacing(6)} ${theme.spacing(12)}`,
             borderRadius: theme.spacing(12),

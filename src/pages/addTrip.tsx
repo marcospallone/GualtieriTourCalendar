@@ -8,9 +8,9 @@ import {
   MenuItem,
   Select,
   TextField,
+  useMediaQuery,
 } from "@mui/material";
 import {
-  DatePicker,
   DateTimePicker,
   LocalizationProvider,
 } from "@mui/x-date-pickers";
@@ -19,9 +19,10 @@ import { Dayjs } from "dayjs";
 import * as React from "react";
 import { useEffect, useState } from "react";
 import { itIT } from "@mui/x-date-pickers/locales";
-
+import KeyboardBackspaceIcon from '@mui/icons-material/KeyboardBackspace';
 import "dayjs/locale/it";
 import { useRouter } from "next/router";
+import DoneIcon from '@mui/icons-material/Done';
 
 interface Vehicle {
   id: number;
@@ -40,6 +41,8 @@ const AddTrip: React.FC = () => {
   const [vehicleName, setVehicleName] = useState<string>("");
   const [drivers, setDrivers] = useState<any[]>([]);
   const [vehicles, setVehicles] = useState<any[]>([]);
+
+  const isMobile = useMediaQuery(theme.breakpoints.down("lg"));
 
   const router = useRouter();
 
@@ -98,7 +101,7 @@ const AddTrip: React.FC = () => {
           }),
         });
         if (response.ok) {
-          router.push('/')
+          router.push("/");
         } else {
           const errorData = await response.json();
           alert(`Errore nella creazione del viaggio: ${errorData.error}`);
@@ -114,7 +117,12 @@ const AddTrip: React.FC = () => {
 
   return (
     <Box className={"main-box"}>
-      <Box>
+      <Box
+        display={"flex"}
+        flexDirection={"column"}
+        rowGap={theme.spacing(12)}
+        paddingTop={theme.spacing(12)}
+      >
         <Box>
           <FormControl fullWidth>
             <TextField
@@ -146,7 +154,7 @@ const AddTrip: React.FC = () => {
                 slotProps={{
                   textField: {
                     inputProps: {
-                      readOnly: true
+                      readOnly: true,
                     },
                   },
                 }}
@@ -200,21 +208,42 @@ const AddTrip: React.FC = () => {
         </Box>
       </Box>
       <Box
-        sx={{
-          width: "fit-content",
-          borderRadius: theme.spacing(12),
-          backgroundColor: "red",
-          padding: `${theme.spacing(10)} ${theme.spacing(16)}`,
-          display: "flex",
-        }}
+        display={"flex"}
+        justifyContent={"space-around"}
+        padding={`0 ${theme.spacing(32)}`}
+        marginTop={theme.spacing(16)}
+        marginBottom={theme.spacing(16)}
       >
-        <Button
-          sx={{ color: "#fff" }}
-          startIcon={<AddIcon />}
-          onClick={handleSaveTrip}
-        >
-          Salva
-        </Button>
+        <Box>
+          <Button
+            sx={{
+              backgroundColor: "#018749",
+              color: "#fff",
+              padding: isMobile ? `${theme.spacing(6)} ${theme.spacing(12)}` : `${theme.spacing(12)} ${theme.spacing(32)}`,
+              borderRadius: isMobile ? theme.spacing(12) : theme.spacing(18),
+              fontSize: !isMobile ? theme.spacing(18) : 'normal'
+            }}
+            startIcon={<DoneIcon />}
+            onClick={handleSaveTrip}
+          >
+            Salva
+          </Button>
+        </Box>
+        <Box>
+          <Button
+            sx={{
+              backgroundColor: "#A9A9A9",
+              color: "#fff",
+              padding: isMobile ? `${theme.spacing(6)} ${theme.spacing(12)}` : `${theme.spacing(12)} ${theme.spacing(32)}`,
+              borderRadius: isMobile ? theme.spacing(12) : theme.spacing(18),
+              fontSize: !isMobile ? theme.spacing(18) : 'normal'
+            }}
+            startIcon={<KeyboardBackspaceIcon />}
+            onClick={() => router.push('/')}
+          >
+            Indietro
+          </Button>
+        </Box>
       </Box>
     </Box>
   );

@@ -1,13 +1,15 @@
 import { Box, List, ListItem, ListItemIcon, ListItemText } from "@mui/material";
-import React from "react";
+import React, { useState } from "react";
 import { useRouter } from "next/router";
 import theme from "@/theme/theme";
 import SignpostIcon from "@mui/icons-material/Signpost";
 import AirportShuttleIcon from "@mui/icons-material/AirportShuttle";
 import PersonIcon from "@mui/icons-material/Person";
+import Logo from "./Logo";
 
 function Sidebar() {
   const router = useRouter();
+  const [selected, setSelected] = useState(0);
   const sections = [
     {
       label: "Viaggi",
@@ -26,33 +28,25 @@ function Sidebar() {
     },
   ];
 
-  const handleClickMenuItem = (url: any) => {
+  const handleClickMenuItem = (url: any, index:number) => {
+    setSelected(index);
     router.push(url);
   };
   return (
     <Box sx={{ height: "100vh", padding: theme.spacing(12),  }}>
       <Box>
-        <Box
-          display={"flex"}
-          sx={{ cursor: "pointer" }}
-          onClick={() => router.push("/")}
-        >
-          <img
-            src={"/images/LogoGT.png"}
-            alt="Gualtieri Tour Logo"
-          />
-        </Box>
+        <Logo />
         <List>
           {sections?.map((section, index) => (
             <ListItem
               key={index}
-              onClick={() => handleClickMenuItem(section.url)}
+              onClick={() => handleClickMenuItem(section.url, index)}
               sx={{ px: 0, cursor: "pointer" }}
             >
-              <ListItemIcon>{section.icon}</ListItemIcon>
+              <ListItemIcon sx={{color: index == selected ? '#EB8317' : null}}>{section.icon}</ListItemIcon>
               <ListItemText
                 primary={section?.label}
-                sx={{ '& .MuiTypography-root' :{fontWeight: 'bold'} }}
+                sx={{ '& .MuiTypography-root' :{fontWeight: 'bold', color: index == selected ? '#EB8317' : null} }}
               />
             </ListItem>
           ))}

@@ -1,5 +1,6 @@
 import FullCalendar from "@fullcalendar/react";
 import {
+  Backdrop,
   Box,
   Button,
   Divider,
@@ -32,6 +33,7 @@ import dayjs from "dayjs";
 import AddIcon from "@mui/icons-material/Add";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
+import DoneIcon from "@mui/icons-material/Done";
 
 interface Trip {
   id: number;
@@ -213,8 +215,10 @@ const Calendar: React.FC = () => {
   };
 
   const [touchStartY, setTouchStartY] = useState(0);
-  const [translateY, setTranslateY] = useState(0);
+  const [translateY, setTranslateY] = useState(100);
   const [isSwiping, setIsSwiping] = useState(false);
+
+  useEffect(() => {}, [showTripList]);
 
   const handleTouchStart = (e: any) => {
     setTouchStartY(e.touches[0].clientY);
@@ -233,6 +237,7 @@ const Calendar: React.FC = () => {
   const handleTouchEnd = () => {
     setIsSwiping(false);
     if (translateY > 50) {
+      setTranslateY(180);
       setShowTripList(false);
     } else {
       setTranslateY(0);
@@ -248,13 +253,19 @@ const Calendar: React.FC = () => {
 
   const renderEventContent = (eventInfo: any) => {
     return (
-      <Box>
-        <Typography variant="h6" component={"p"}>
+      <Box
+        sx={{
+          backgroundColor: "#EB8317",
+          borderRadius: theme.spacing(16),
+          padding: theme.spacing(6),
+        }}
+      >
+        <Typography variant="h6" component={"p"} color="#fff !important">
           {eventInfo.timeText.includes(":")
             ? eventInfo.timeText
             : eventInfo.timeText + ":00"}
         </Typography>
-        <Typography variant="body1" component={"p"}>
+        <Typography variant="body1" component={"p"} color="#fff !important">
           {eventInfo.event.title}
         </Typography>
       </Box>
@@ -356,10 +367,31 @@ const Calendar: React.FC = () => {
             headerToolbar={{
               right: "prev,next",
             }}
-            height={theme.spacing(459)}
+            height={isMobile ? theme.spacing(459) : "auto"}
+            contentHeight={500}
             fixedWeekCount={false}
           />
         </Box>
+        {showTripList && (
+          <Box
+            sx={{
+              position: "fixed",
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              backgroundColor: "rgba(0, 0, 0, 0.5)",
+              backdropFilter: "blur(5px)",
+              zIndex: 1,
+            }}
+            onClick={() => {
+              setTranslateY(300);
+              setTimeout(() => {
+                setShowTripList(false);
+              }, 400);
+            }}
+          />
+        )}
         {showTripList ? (
           <>
             <Paper
@@ -371,17 +403,20 @@ const Calendar: React.FC = () => {
                 padding: theme.spacing(16),
                 borderRadius: `${theme.spacing(16)} ${theme.spacing(16)} 0 0`,
                 transform: `translateY(${translateY}px)`,
-                transition: isSwiping ? "none" : "transform 0.3s ease-out",
+                transition: isSwiping ? "none" : "transform 0.5s ease-out",
                 zIndex: 1,
               }}
-              elevation={4}
+              elevation={24}
               onTouchStart={handleTouchStart}
               onTouchMove={handleTouchMove}
               onTouchEnd={handleTouchEnd}
             >
               <Box display={"flex"} justifyContent={"flex-end"}>
                 <IconButton
-                  onClick={() => setShowTripList(false)}
+                  onClick={() => {
+                    setTranslateY(180);
+                    setTimeout(() => setShowTripList(false), 300);
+                  }}
                   sx={{
                     backgroundColor: "#F4F6FF",
                     color: "#2C3E50",
@@ -504,18 +539,24 @@ const Calendar: React.FC = () => {
         ) : null}
         <Box></Box>
       </Box>
+      <Backdrop
+        sx={{ zIndex: 1 }}
+        open={modalOpen}
+        onClick={() => setModalOpen(false)} // Il click sul backdrop chiude la modal
+      />
       <Modal
         className={isMobile ? styles.mobileModal : styles.modal}
         open={modalOpen}
         onClose={handleCloseModal}
+        hideBackdrop
       >
-        <Box display={"flex"} flexDirection={"column"}>
+        <Box display={"flex"} flexDirection={"column"} className={styles.modalBox}>
           <Box display={"flex"} justifyContent={"flex-end"}>
             <IconButton onClick={handleCloseModal}>
-              <CloseIcon sx={{ color: "#fff" }} />
+              <CloseIcon sx={{ color: "#2C3E50" }} />
             </IconButton>
           </Box>
-          <Box>
+          <Box display={'flex'} flexDirection={'column'} rowGap={theme.spacing(12)}>
             <Box>
               <FormControl fullWidth>
                 <TextField
@@ -613,17 +654,21 @@ const Calendar: React.FC = () => {
               </FormControl>
             </Box>
             <Box
-              sx={{
-                width: "fit-content",
-                borderRadius: theme.spacing(12),
-                backgroundColor: "red",
-                padding: `${theme.spacing(10)} ${theme.spacing(16)}`,
-                display: "flex",
-              }}
             >
               <Button
-                sx={{ color: "#fff" }}
-                startIcon={<AddIcon />}
+                sx={{
+                  backgroundColor: "#018749",
+                  color: "#fff",
+                  padding: isMobile
+                    ? `${theme.spacing(6)} ${theme.spacing(12)}`
+                    : `${theme.spacing(12)} ${theme.spacing(32)}`,
+                  borderRadius: isMobile
+                    ? theme.spacing(12)
+                    : theme.spacing(18),
+                  fontSize: !isMobile ? theme.spacing(18) : "normal",
+                  margin: 'auto'
+                }}
+                startIcon={<DoneIcon />}
                 onClick={handleSaveTrip}
               >
                 Salva
@@ -643,17 +688,21 @@ const Calendar: React.FC = () => {
                   </Divider>
                 </Box>
                 <Box
-                  sx={{
-                    width: "fit-content",
-                    borderRadius: theme.spacing(12),
-                    backgroundColor: "red",
-                    padding: `${theme.spacing(10)} ${theme.spacing(16)}`,
-                    display: "flex",
-                  }}
                 >
                   <Button
-                    sx={{ color: "#fff" }}
-                    startIcon={<AddIcon />}
+                    sx={{
+                      backgroundColor: "#B8001F",
+                      color: "#fff",
+                      padding: isMobile
+                        ? `${theme.spacing(6)} ${theme.spacing(12)}`
+                        : `${theme.spacing(12)} ${theme.spacing(32)}`,
+                      borderRadius: isMobile
+                        ? theme.spacing(12)
+                        : theme.spacing(18),
+                      fontSize: !isMobile ? theme.spacing(18) : "normal",
+                      margin: 'auto'
+                    }}
+                    startIcon={<DeleteIcon />}
                     onClick={() => handleDeleteTrip(null, null)}
                   >
                     Elimina viaggio

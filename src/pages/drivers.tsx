@@ -1,19 +1,22 @@
 import {
   Box,
   Button,
+  Divider,
   Fade,
+  FormControl,
   IconButton,
   List,
   ListItem,
   ListItemText,
   TextField,
+  useMediaQuery,
 } from "@mui/material";
 import * as React from "react";
 import AddIcon from "@mui/icons-material/Add";
 import theme from "@/theme/theme";
 import DoneIcon from "@mui/icons-material/Done";
 import CloseIcon from "@mui/icons-material/Close";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import DeleteIcon from "@mui/icons-material/Delete";
 
 interface Driver {
@@ -25,6 +28,9 @@ const Drivers: React.FC = () => {
   const [drivers, setDrivers] = useState<any[]>([]);
   const [adding, setAdding] = useState(false);
   const [driverName, setDriverName] = useState("");
+
+  const isMobile = useMediaQuery(theme.breakpoints.down("lg"));
+
   const handleNewDriverClick = () => {
     setAdding(true);
   };
@@ -110,66 +116,80 @@ const Drivers: React.FC = () => {
     <Box className={"main-box"}>
       {adding ? (
         <Fade in={adding} timeout={500}>
-          <Box display={"flex"}>
+          <Box
+            display={"flex"}
+            flexDirection={isMobile ? "column" : "row"}
+            paddingTop={theme.spacing(12)}
+          >
             <Box>
-              <TextField
-                label="Nome"
-                variant="outlined"
-                value={driverName}
-                onChange={(event) =>
-                  handleChangeDriverName(event?.target?.value)
-                }
-              />
+              <FormControl fullWidth>
+                <TextField
+                  label="Nome"
+                  variant="outlined"
+                  value={driverName}
+                  onChange={(event) =>
+                    handleChangeDriverName(event?.target?.value)
+                  }
+                />
+              </FormControl>
             </Box>
             <Box
-              sx={{
-                width: "fit-content",
-                borderRadius: theme.spacing(12),
-                backgroundColor: "red",
-                padding: `${theme.spacing(10)} ${theme.spacing(16)}`,
-                marginLeft: theme.spacing(12),
-                display: "flex",
-              }}
+              display={"flex"}
+              justifyContent={"space-around"}
+              padding={`0 ${theme.spacing(32)}`}
+              marginTop={isMobile ? theme.spacing(16) : 0}
+              marginBottom={isMobile ? theme.spacing(16) : 0}
             >
-              <Button
-                sx={{ color: "#fff" }}
-                startIcon={<DoneIcon />}
-                onClick={handleSaveDriverClick}
-              >
-                Salva
-              </Button>
-            </Box>{" "}
-            <Box
-              sx={{
-                width: "fit-content",
-                borderRadius: theme.spacing(12),
-                backgroundColor: "gray",
-                padding: `${theme.spacing(10)} ${theme.spacing(16)}`,
-                marginLeft: theme.spacing(12),
-                display: "flex",
-              }}
-            >
-              <Button
-                sx={{ color: "#fff" }}
-                startIcon={<CloseIcon />}
-                onClick={() => setAdding(false)}
-              >
-                Annulla
-              </Button>
+              <Box>
+                <Button
+                  sx={{
+                    backgroundColor: "#018749",
+                    color: "#fff",
+                    padding: isMobile
+                      ? `${theme.spacing(6)} ${theme.spacing(12)}`
+                      : `${theme.spacing(12)} ${theme.spacing(32)}`,
+                    borderRadius: isMobile
+                      ? theme.spacing(12)
+                      : theme.spacing(18),
+                    fontSize: !isMobile ? theme.spacing(18) : "normal",
+                  }}
+                  startIcon={<DoneIcon />}
+                  onClick={handleSaveDriverClick}
+                >
+                  Salva
+                </Button>
+              </Box>
+              <Box marginLeft={isMobile ? 0 : theme.spacing(16)}>
+                <Button
+                  sx={{
+                    backgroundColor: "#A9A9A9",
+                    color: "#fff",
+                    padding: isMobile
+                      ? `${theme.spacing(6)} ${theme.spacing(12)}`
+                      : `${theme.spacing(12)} ${theme.spacing(32)}`,
+                    borderRadius: isMobile
+                      ? theme.spacing(12)
+                      : theme.spacing(18),
+                    fontSize: !isMobile ? theme.spacing(18) : "normal",
+                  }}
+                  startIcon={<CloseIcon />}
+                  onClick={() => setAdding(false)}
+                >
+                  Annulla
+                </Button>
+              </Box>
             </Box>
           </Box>
         </Fade>
       ) : (
-        <Box
-          sx={{
-            width: "fit-content",
-            borderRadius: theme.spacing(12),
-            backgroundColor: "red",
-            padding: `${theme.spacing(10)} ${theme.spacing(16)}`,
-          }}
-        >
+        <Box paddingTop={theme.spacing(12)}>
           <Button
-            sx={{ color: "#fff" }}
+            sx={{
+              backgroundColor: "#018749",
+              color: "#fff",
+              padding: `${theme.spacing(6)} ${theme.spacing(12)}`,
+              borderRadius: theme.spacing(12),
+            }}
             startIcon={<AddIcon />}
             onClick={handleNewDriverClick}
           >
@@ -177,23 +197,33 @@ const Drivers: React.FC = () => {
           </Button>
         </Box>
       )}
-      <Box>
+      <Box marginTop={theme.spacing(8)}>
         <List>
           {drivers?.map((driver, index) => (
-            <ListItem
-              key={index}
-              secondaryAction={
-                <IconButton
-                  edge="end"
-                  aria-label="delete"
-                  onClick={() => handleDeleteVehicle(driver.id)}
-                >
-                  <DeleteIcon />
-                </IconButton>
-              }
-            >
-              <ListItemText primary={driver?.name} />
-            </ListItem>
+            <>
+              <ListItem
+                key={index}
+                secondaryAction={
+                  <Box
+                    sx={{
+                      backgroundColor: "#B8001F",
+                      borderRadius: "50%",
+                    }}
+                  >
+                    <IconButton
+                      aria-label="delete"
+                      onClick={() => handleDeleteVehicle(driver.id)}
+                      sx={{ color: "#fff" }}
+                    >
+                      <DeleteIcon />
+                    </IconButton>
+                  </Box>
+                }
+              >
+                <ListItemText primary={driver?.name} />
+              </ListItem>
+              <Divider component={"li"} />
+            </>
           ))}
         </List>
       </Box>
