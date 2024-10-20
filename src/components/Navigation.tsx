@@ -1,14 +1,10 @@
-import {
-  BottomNavigation,
-  BottomNavigationAction,
-  Box,
-  Paper,
-} from "@mui/material";
+import { BottomNavigation, BottomNavigationAction, Paper } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import SignpostIcon from "@mui/icons-material/Signpost";
 import AirportShuttleIcon from "@mui/icons-material/AirportShuttle";
 import PersonIcon from "@mui/icons-material/Person";
+import LogoutIcon from "@mui/icons-material/Logout";
 
 const sections = [
   {
@@ -29,46 +25,60 @@ const sections = [
 ];
 
 function Navigation() {
-  const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(
-    null
-  );
   const router = useRouter();
 
   const [value, setValue] = useState(0);
 
   useEffect(() => {
-    router.push(sections[Number(value)].url)
-  }, [value])
+    if (value != 3) {
+      router.push(sections[Number(value)].url);
+    }
+  }, [value]);
 
-  const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorElNav(event.currentTarget);
-  };
+  const handleLogout = async () => {
+    const response = await fetch("/api/logout", {
+      method: "POST",
+    });
 
-  const handleCloseNavMenu = () => {
-    setAnchorElNav(null);
-  };
-  
-  const handleClickNavMenu = (url:string) => {
-    setAnchorElNav(null);
-    router.push(url)
+    if (response.ok) {
+      router.push("/login");
+    } else {
+      console.error("Errore durante il logout");
+    }
   };
 
   return (
-    <Paper sx={{ position: 'fixed', bottom: 0, left: 0, right: 0 }} elevation={3}>
-        <BottomNavigation
-          showLabels
-          value={value}
-          onChange={(event, newValue) => {
-            setValue(newValue);
-          }}
-        >
-          {sections.map((section, index) => (
-            <BottomNavigationAction key={index} label={section.label} icon={section.icon} sx={{'&.Mui-selected': {
-            color: '#EB8317',
-          }}} />
-          ))}
-        </BottomNavigation>
-      </Paper>
+    <Paper
+      sx={{ position: "fixed", bottom: 0, left: 0, right: 0 }}
+      elevation={3}
+    >
+      <BottomNavigation
+        showLabels
+        value={value}
+        onChange={(event, newValue) => {
+          console.log(newValue);
+          // setValue(newValue);
+        }}
+      >
+        {sections.map((section, index) => (
+          <BottomNavigationAction
+            key={index}
+            label={section.label}
+            icon={section.icon}
+            sx={{
+              "&.Mui-selected": {
+                color: "#EB8317",
+              },
+            }}
+          />
+        ))}
+        <BottomNavigationAction
+          label={"Logout"}
+          icon={<LogoutIcon />}
+          onClick={handleLogout}
+        />
+      </BottomNavigation>
+    </Paper>
   );
 }
 export default Navigation;

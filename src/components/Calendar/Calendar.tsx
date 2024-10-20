@@ -248,7 +248,9 @@ const Calendar: React.FC = () => {
     setActualDay(info.date);
     getDayTrips(info.date);
     setTranslateY(0);
-    setShowTripList(true);
+    if (isMobile) {
+      setShowTripList(true);
+    }
   };
 
   const renderEventContent = (eventInfo: any) => {
@@ -505,29 +507,19 @@ const Calendar: React.FC = () => {
                                   Modifica
                                 </Button>
                               </Box>
-                              <Box>
-                                <Button
-                                  onClick={() =>
-                                    handleDeleteTrip(trip.id, trip.date)
-                                  }
-                                  endIcon={<DeleteIcon />}
-                                  sx={{
-                                    backgroundColor: "#B8001F",
-                                    color: "#fff",
-                                    padding: `${theme.spacing(
-                                      6
-                                    )} ${theme.spacing(12)}`,
-                                    borderRadius: theme.spacing(12),
-                                  }}
-                                >
-                                  Elimina
-                                </Button>
-                              </Box>
                             </Box>
                           </Box>
                         </ListItem>
                         {index < dayTrips.length - 1 && (
-                          <Divider variant="middle" component="li" flexItem />
+                          <Divider
+                            variant="middle"
+                            component="li"
+                            flexItem
+                            sx={{
+                              marginTop: theme.spacing(4),
+                              marginBottom: theme.spacing(4),
+                            }}
+                          />
                         )}
                       </>
                     );
@@ -542,7 +534,7 @@ const Calendar: React.FC = () => {
       <Backdrop
         sx={{ zIndex: 1 }}
         open={modalOpen}
-        onClick={() => setModalOpen(false)} // Il click sul backdrop chiude la modal
+        onClick={() => setModalOpen(false)}
       />
       <Modal
         className={isMobile ? styles.mobileModal : styles.modal}
@@ -550,13 +542,34 @@ const Calendar: React.FC = () => {
         onClose={handleCloseModal}
         hideBackdrop
       >
-        <Box display={"flex"} flexDirection={"column"} className={styles.modalBox}>
-          <Box display={"flex"} justifyContent={"flex-end"}>
-            <IconButton onClick={handleCloseModal}>
-              <CloseIcon sx={{ color: "#2C3E50" }} />
+        <Box
+          display={"flex"}
+          flexDirection={"column"}
+          className={styles.modalBox}
+        >
+          <Box
+            display={"flex"}
+            justifyContent={"flex-end"}
+            marginBottom={theme.spacing(16)}
+            marginTop={isMobile ? theme.spacing(16) : 0}
+          >
+            <IconButton
+              onClick={handleCloseModal}
+              sx={{
+                backgroundColor: "#F4F6FF",
+                color: "#2C3E50",
+                padding: `${theme.spacing(6)}`,
+                borderRadius: "50%",
+              }}
+            >
+              <CloseIcon />
             </IconButton>
           </Box>
-          <Box display={'flex'} flexDirection={'column'} rowGap={theme.spacing(12)}>
+          <Box
+            display={"flex"}
+            flexDirection={"column"}
+            rowGap={theme.spacing(12)}
+          >
             <Box>
               <FormControl fullWidth>
                 <TextField
@@ -653,8 +666,7 @@ const Calendar: React.FC = () => {
                 </Select>
               </FormControl>
             </Box>
-            <Box
-            >
+            <Box>
               <Button
                 sx={{
                   backgroundColor: "#018749",
@@ -666,7 +678,7 @@ const Calendar: React.FC = () => {
                     ? theme.spacing(12)
                     : theme.spacing(18),
                   fontSize: !isMobile ? theme.spacing(18) : "normal",
-                  margin: 'auto'
+                  margin: "auto",
                 }}
                 startIcon={<DoneIcon />}
                 onClick={handleSaveTrip}
@@ -674,42 +686,38 @@ const Calendar: React.FC = () => {
                 Salva
               </Button>
             </Box>
-            {!isMobile && (
-              <>
-                <Box>
-                  <Divider textAlign="center">
-                    <Typography
-                      variant="body1"
-                      component="span"
-                      sx={{ padding: "1rem" }}
-                    >
-                      oppure
-                    </Typography>
-                  </Divider>
-                </Box>
-                <Box
+
+            <Box>
+              <Divider textAlign="center">
+                <Typography
+                  variant="body1"
+                  component="span"
+                  sx={{ padding: "1rem" }}
                 >
-                  <Button
-                    sx={{
-                      backgroundColor: "#B8001F",
-                      color: "#fff",
-                      padding: isMobile
-                        ? `${theme.spacing(6)} ${theme.spacing(12)}`
-                        : `${theme.spacing(12)} ${theme.spacing(32)}`,
-                      borderRadius: isMobile
-                        ? theme.spacing(12)
-                        : theme.spacing(18),
-                      fontSize: !isMobile ? theme.spacing(18) : "normal",
-                      margin: 'auto'
-                    }}
-                    startIcon={<DeleteIcon />}
-                    onClick={() => handleDeleteTrip(null, null)}
-                  >
-                    Elimina viaggio
-                  </Button>
-                </Box>
-              </>
-            )}
+                  oppure
+                </Typography>
+              </Divider>
+            </Box>
+            <Box>
+              <Button
+                sx={{
+                  backgroundColor: "#B8001F",
+                  color: "#fff",
+                  padding: isMobile
+                    ? `${theme.spacing(6)} ${theme.spacing(12)}`
+                    : `${theme.spacing(12)} ${theme.spacing(32)}`,
+                  borderRadius: isMobile
+                    ? theme.spacing(12)
+                    : theme.spacing(18),
+                  fontSize: !isMobile ? theme.spacing(18) : "normal",
+                  margin: "auto",
+                }}
+                startIcon={<DeleteIcon />}
+                onClick={() => handleDeleteTrip(null, null)}
+              >
+                Elimina viaggio
+              </Button>
+            </Box>
           </Box>
         </Box>
       </Modal>
