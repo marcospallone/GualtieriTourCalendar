@@ -5,6 +5,7 @@ import SignpostIcon from "@mui/icons-material/Signpost";
 import AirportShuttleIcon from "@mui/icons-material/AirportShuttle";
 import PersonIcon from "@mui/icons-material/Person";
 import LogoutIcon from "@mui/icons-material/Logout";
+import styles from "./Navigation.module.scss";
 
 const sections = [
   {
@@ -49,7 +50,7 @@ function Navigation() {
 
   return (
     <Paper
-      sx={{ position: "fixed", bottom: 0, left: 0, right: 0 }}
+    className={styles.navigationPaper}
       elevation={3}
     >
       <BottomNavigation
@@ -57,7 +58,7 @@ function Navigation() {
         value={value}
         onChange={(event, newValue) => {
           console.log(newValue);
-          // setValue(newValue);
+          setValue(newValue);
         }}
       >
         {sections.map((section, index) => (

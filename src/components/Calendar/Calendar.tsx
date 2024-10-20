@@ -1,39 +1,16 @@
 import FullCalendar from "@fullcalendar/react";
-import {
-  Backdrop,
-  Box,
-  Button,
-  Divider,
-  FormControl,
-  IconButton,
-  InputLabel,
-  List,
-  ListItem,
-  MenuItem,
-  Modal,
-  Paper,
-  Select,
-  TextField,
-  Typography,
-  useMediaQuery,
-} from "@mui/material";
+import { Backdrop, Box, Typography, useMediaQuery } from "@mui/material";
 import * as React from "react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import { useEffect, useState } from "react";
 import itLocale from "@fullcalendar/core/locales/it";
 import interactionPlugin from "@fullcalendar/interaction";
 import theme from "@/theme/theme";
-import styles from "./Calendar.module.scss";
-import CloseIcon from "@mui/icons-material/Close";
-import { LocalizationProvider, DateTimePicker } from "@mui/x-date-pickers";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { itIT } from "@mui/x-date-pickers/locales";
 import "dayjs/locale/it";
 import dayjs from "dayjs";
-import AddIcon from "@mui/icons-material/Add";
-import EditIcon from "@mui/icons-material/Edit";
-import DeleteIcon from "@mui/icons-material/Delete";
-import DoneIcon from "@mui/icons-material/Done";
+import DailyTripsPaper from "../DailyTripsPaper/DailyTripsPaper";
+import TripModal from "../TripModal/TripModal";
+import styles from "./Calendar.module.scss";
 
 interface Trip {
   id: number;
@@ -66,6 +43,7 @@ const Calendar: React.FC = () => {
   const [vehicles, setVehicles] = useState<any[]>([]);
   const [drivers, setDrivers] = useState<any[]>([]);
   const [actualDay, setActualDay] = useState<any>();
+  const [translateY, setTranslateY] = useState(0);
 
   const isMobile = useMediaQuery(theme.breakpoints.down("lg"));
 
@@ -214,36 +192,6 @@ const Calendar: React.FC = () => {
     }
   };
 
-  const [touchStartY, setTouchStartY] = useState(0);
-  const [translateY, setTranslateY] = useState(100);
-  const [isSwiping, setIsSwiping] = useState(false);
-
-  useEffect(() => {}, [showTripList]);
-
-  const handleTouchStart = (e: any) => {
-    setTouchStartY(e.touches[0].clientY);
-    setIsSwiping(true);
-  };
-
-  const handleTouchMove = (e: any) => {
-    const touchEndY = e.touches[0].clientY;
-    const swipeDistance = touchEndY - touchStartY;
-
-    if (swipeDistance > 0) {
-      setTranslateY(swipeDistance);
-    }
-  };
-
-  const handleTouchEnd = () => {
-    setIsSwiping(false);
-    if (translateY > 50) {
-      setTranslateY(180);
-      setShowTripList(false);
-    } else {
-      setTranslateY(0);
-    }
-  };
-
   const handleCellClick = (info: any) => {
     setActualDay(info.date);
     getDayTrips(info.date);
@@ -255,13 +203,7 @@ const Calendar: React.FC = () => {
 
   const renderEventContent = (eventInfo: any) => {
     return (
-      <Box
-        sx={{
-          backgroundColor: "#EB8317",
-          borderRadius: theme.spacing(16),
-          padding: theme.spacing(6),
-        }}
-      >
+      <Box className={styles.eventContent}>
         <Typography variant="h6" component={"p"} color="#fff !important">
           {eventInfo.timeText.includes(":")
             ? eventInfo.timeText
@@ -293,22 +235,11 @@ const Calendar: React.FC = () => {
 
       return (
         <Box>
-          <Box sx={{ textAlign: "right" }}>
+          <Box className={styles.dayNumber}>
             <Typography component={"span"}>{info.dayNumberText}</Typography>
           </Box>
           {eventCount > 0 && (
-            <Box
-              className="event-count"
-              sx={{
-                backgroundColor: "#EB8317",
-                color: "#10375C",
-                display: "flex",
-                justifyContent: "center",
-                padding: theme.spacing(4),
-                borderRadius: "30%",
-                marginTop: theme.spacing(6),
-              }}
-            >
+            <Box className={styles.eventCount}>
               <Typography
                 variant="button"
                 component={"span"}
@@ -352,6 +283,10 @@ const Calendar: React.FC = () => {
     setModalOpen(false);
   };
 
+  const updateShowTripList = (value: boolean) => {
+    setShowTripList(value);
+  };
+
   return (
     <>
       <Box sx={{ filter: modalOpen ? "blur(8px)" : "none" }}>
@@ -376,16 +311,7 @@ const Calendar: React.FC = () => {
         </Box>
         {showTripList && (
           <Box
-            sx={{
-              position: "fixed",
-              top: 0,
-              left: 0,
-              right: 0,
-              bottom: 0,
-              backgroundColor: "rgba(0, 0, 0, 0.5)",
-              backdropFilter: "blur(5px)",
-              zIndex: 1,
-            }}
+            className={styles.backdropPaper}
             onClick={() => {
               setTranslateY(300);
               setTimeout(() => {
@@ -395,139 +321,11 @@ const Calendar: React.FC = () => {
           />
         )}
         {showTripList ? (
-          <>
-            <Paper
-              sx={{
-                position: "fixed",
-                bottom: 0,
-                left: 0,
-                right: 0,
-                padding: theme.spacing(16),
-                borderRadius: `${theme.spacing(16)} ${theme.spacing(16)} 0 0`,
-                transform: `translateY(${translateY}px)`,
-                transition: isSwiping ? "none" : "transform 0.5s ease-out",
-                zIndex: 1,
-              }}
-              elevation={24}
-              onTouchStart={handleTouchStart}
-              onTouchMove={handleTouchMove}
-              onTouchEnd={handleTouchEnd}
-            >
-              <Box display={"flex"} justifyContent={"flex-end"}>
-                <IconButton
-                  onClick={() => {
-                    setTranslateY(180);
-                    setTimeout(() => setShowTripList(false), 300);
-                  }}
-                  sx={{
-                    backgroundColor: "#F4F6FF",
-                    color: "#2C3E50",
-                    padding: `${theme.spacing(6)}`,
-                    borderRadius: "50%",
-                  }}
-                >
-                  <CloseIcon />
-                </IconButton>
-              </Box>
-              <Box>
-                <List disablePadding>
-                  {dayTrips.map((trip, index) => {
-                    const validDate = new Date(trip.start);
-                    const formattedDay = new Intl.DateTimeFormat("it-IT", {
-                      day: "2-digit",
-                      month: "long",
-                      year: "numeric",
-                    }).format(validDate);
-
-                    const formattedTime = new Intl.DateTimeFormat("it-IT", {
-                      hour: "2-digit",
-                      minute: "2-digit",
-                      hour12: false,
-                    }).format(validDate);
-                    const date = `${formattedDay} - ${formattedTime}`;
-
-                    return (
-                      <>
-                        <ListItem key={index}>
-                          <Box width={"100%"}>
-                            <Box>
-                              <Typography
-                                component={"span"}
-                                variant="body1"
-                                fontWeight={"bold"}
-                              >
-                                {trip.title}
-                              </Typography>
-                            </Box>
-                            <Box>
-                              <Typography
-                                component={"span"}
-                                variant="body1"
-                                fontWeight={"bold"}
-                              >
-                                Data:{" "}
-                              </Typography>
-                              <Typography component={"span"} variant="body1">
-                                {date}
-                              </Typography>
-                            </Box>
-                            <Box>
-                              {trip.driverName && (
-                                <Typography
-                                  component={"span"}
-                                  variant="body1"
-                                  fontWeight={"bold"}
-                                >
-                                  Autista:{" "}
-                                </Typography>
-                              )}
-                              <Typography component={"span"} variant="body1">
-                                {trip.driverName}
-                              </Typography>
-                            </Box>
-                            <Box
-                              display={"flex"}
-                              justifyContent={"center"}
-                              columnGap={theme.spacing(32)}
-                              marginTop={theme.spacing(12)}
-                            >
-                              <Box>
-                                <Button
-                                  onClick={() => handleEventClick(trip)}
-                                  endIcon={<EditIcon />}
-                                  sx={{
-                                    backgroundColor: "#F3C623",
-                                    color: "#fff",
-                                    padding: `${theme.spacing(
-                                      6
-                                    )} ${theme.spacing(12)}`,
-                                    borderRadius: theme.spacing(12),
-                                  }}
-                                >
-                                  Modifica
-                                </Button>
-                              </Box>
-                            </Box>
-                          </Box>
-                        </ListItem>
-                        {index < dayTrips.length - 1 && (
-                          <Divider
-                            variant="middle"
-                            component="li"
-                            flexItem
-                            sx={{
-                              marginTop: theme.spacing(4),
-                              marginBottom: theme.spacing(4),
-                            }}
-                          />
-                        )}
-                      </>
-                    );
-                  })}
-                </List>
-              </Box>
-            </Paper>
-          </>
+          <DailyTripsPaper
+            dayTrips={dayTrips}
+            updateShowTripList={updateShowTripList}
+            handleEventClick={handleEventClick}
+          />
         ) : null}
         <Box></Box>
       </Box>
@@ -536,191 +334,22 @@ const Calendar: React.FC = () => {
         open={modalOpen}
         onClick={() => setModalOpen(false)}
       />
-      <Modal
-        className={isMobile ? styles.mobileModal : styles.modal}
-        open={modalOpen}
-        onClose={handleCloseModal}
-        hideBackdrop
-      >
-        <Box
-          display={"flex"}
-          flexDirection={"column"}
-          className={styles.modalBox}
-        >
-          <Box
-            display={"flex"}
-            justifyContent={"flex-end"}
-            marginBottom={theme.spacing(16)}
-            marginTop={isMobile ? theme.spacing(16) : 0}
-          >
-            <IconButton
-              onClick={handleCloseModal}
-              sx={{
-                backgroundColor: "#F4F6FF",
-                color: "#2C3E50",
-                padding: `${theme.spacing(6)}`,
-                borderRadius: "50%",
-              }}
-            >
-              <CloseIcon />
-            </IconButton>
-          </Box>
-          <Box
-            display={"flex"}
-            flexDirection={"column"}
-            rowGap={theme.spacing(12)}
-          >
-            <Box>
-              <FormControl fullWidth>
-                <TextField
-                  label="Descrizione"
-                  variant="outlined"
-                  value={titleEventInModal}
-                  onChange={(event) =>
-                    setTitleEventInModal(event?.target?.value)
-                  }
-                />
-              </FormControl>
-            </Box>
-            <Box>
-              <FormControl fullWidth>
-                <LocalizationProvider
-                  dateAdapter={AdapterDayjs}
-                  adapterLocale="it"
-                  localeText={
-                    itIT.components.MuiLocalizationProvider.defaultProps
-                      .localeText
-                  }
-                >
-                  <DateTimePicker
-                    label={"Data"}
-                    value={dateEventInModal}
-                    onChange={(date) =>
-                      date ? setDateEventInModal(date) : null
-                    }
-                    format="dddd - DD/MM/YYYY - hh:mm"
-                    views={["day", "month", "year", "hours", "minutes"]}
-                    slots={{
-                      textField: TextField,
-                    }}
-                    slotProps={{
-                      textField: {
-                        inputProps: {
-                          readOnly: true,
-                        },
-                      },
-                    }}
-                  />
-                </LocalizationProvider>
-              </FormControl>
-            </Box>
-            <Box>
-              <FormControl fullWidth>
-                <InputLabel id="select-vehicle-label">Veicolo</InputLabel>
-                <Select
-                  labelId="select-vehicle-label"
-                  id="select-vehicle-label"
-                  value={vehicleEventInModal}
-                  label="Veicolo"
-                  onChange={(event) =>
-                    setVehicleEventInModal(event?.target?.value)
-                  }
-                >
-                  {vehicles.length > 0 ? (
-                    vehicles.map((vehicle, index) => (
-                      <MenuItem key={index} value={vehicle.name}>
-                        {vehicle.name}
-                      </MenuItem>
-                    ))
-                  ) : (
-                    <MenuItem value={""}>
-                      {"Nessun veicolo selezionabile"}
-                    </MenuItem>
-                  )}
-                </Select>
-              </FormControl>
-            </Box>
-            <Box>
-              <FormControl fullWidth>
-                <InputLabel id="select-driver-label">Autista</InputLabel>
-                <Select
-                  labelId="select-driver-label"
-                  id="select-driver-label"
-                  value={driverEventInModal}
-                  label="Autista"
-                  onChange={(event) =>
-                    setDriverEventInModal(event?.target?.value)
-                  }
-                >
-                  {drivers.length > 0 ? (
-                    drivers.map((driver, index) => (
-                      <MenuItem key={index} value={driver.name}>
-                        {driver.name}
-                      </MenuItem>
-                    ))
-                  ) : (
-                    <MenuItem value={""}>
-                      {"Nessun autista selezionabile"}
-                    </MenuItem>
-                  )}
-                </Select>
-              </FormControl>
-            </Box>
-            <Box>
-              <Button
-                sx={{
-                  backgroundColor: "#018749",
-                  color: "#fff",
-                  padding: isMobile
-                    ? `${theme.spacing(6)} ${theme.spacing(12)}`
-                    : `${theme.spacing(12)} ${theme.spacing(32)}`,
-                  borderRadius: isMobile
-                    ? theme.spacing(12)
-                    : theme.spacing(18),
-                  fontSize: !isMobile ? theme.spacing(18) : "normal",
-                  margin: "auto",
-                }}
-                startIcon={<DoneIcon />}
-                onClick={handleSaveTrip}
-              >
-                Salva
-              </Button>
-            </Box>
-
-            <Box>
-              <Divider textAlign="center">
-                <Typography
-                  variant="body1"
-                  component="span"
-                  sx={{ padding: "1rem" }}
-                >
-                  oppure
-                </Typography>
-              </Divider>
-            </Box>
-            <Box>
-              <Button
-                sx={{
-                  backgroundColor: "#B8001F",
-                  color: "#fff",
-                  padding: isMobile
-                    ? `${theme.spacing(6)} ${theme.spacing(12)}`
-                    : `${theme.spacing(12)} ${theme.spacing(32)}`,
-                  borderRadius: isMobile
-                    ? theme.spacing(12)
-                    : theme.spacing(18),
-                  fontSize: !isMobile ? theme.spacing(18) : "normal",
-                  margin: "auto",
-                }}
-                startIcon={<DeleteIcon />}
-                onClick={() => handleDeleteTrip(null, null)}
-              >
-                Elimina viaggio
-              </Button>
-            </Box>
-          </Box>
-        </Box>
-      </Modal>
+      <TripModal
+        modalOpen={modalOpen}
+        handleCloseModal={handleCloseModal}
+        vehicles={vehicles}
+        drivers={drivers}
+        handleSaveTrip={handleSaveTrip}
+        handleDeleteTrip={handleDeleteTrip}
+        titleEventInModal={titleEventInModal}
+        dateEventInModal={dateEventInModal}
+        vehicleEventInModal={vehicleEventInModal}
+        driverEventInModal={driverEventInModal}
+        setTitleEventInModal={setTitleEventInModal}
+        setDateEventInModal={setDateEventInModal}
+        setVehicleEventInModal={setVehicleEventInModal}
+        setDriverEventInModal={setDriverEventInModal}
+      />
     </>
   );
 };

@@ -1,10 +1,10 @@
 import * as React from "react";
 import { ReactNode } from "react";
 import Container from "@mui/material/Container";
-import Navigation from "./Navigation";
+import Navigation from "./Navigation/Navigation";
 import { Box, useMediaQuery } from "@mui/material";
 import theme from "@/theme/theme";
-import Sidebar from "./Sidebar";
+import Sidebar from "./Sidebar/Sidebar";
 import Logo from "./Logo";
 import { useRouter } from "next/router";
 
