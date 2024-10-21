@@ -3,13 +3,15 @@ import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
 export default async function handler(req: any, res: any) {
+  const cookies = req.headers.cookie || '';
+
+  if (!cookies.includes('auth=true')) {
+    return res.status(401).json({ error: 'Non autorizzato' });
+  }
+  
   if (req.method === "GET") {
     try {
-      const trips = await prisma.trip.findMany({
-        // include: {
-        //   vehicle: true
-        // },
-      });
+      const trips = await prisma.trip.findMany({});
       res.status(200).json(trips);
     } catch (error) {
       console.error(error);

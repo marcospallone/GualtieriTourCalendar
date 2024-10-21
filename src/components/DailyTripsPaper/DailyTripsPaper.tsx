@@ -47,8 +47,8 @@ const DailyTripsPaper: React.FC<DailyTripsPaperProps> = ({
   const handleTouchEnd = () => {
     setIsSwiping(false);
     if (translateY > 50) {
-      setTranslateY(180);
-      updateShowTripList(false);
+      setTranslateY(400);
+      setTimeout(() => updateShowTripList(false), 300);
     } else {
       setTranslateY(0);
     }
@@ -70,7 +70,7 @@ const DailyTripsPaper: React.FC<DailyTripsPaperProps> = ({
         <IconButton
           className={styles.closePaper}
           onClick={() => {
-            setTranslateY(180);
+            setTranslateY(400);
             setTimeout(() => updateShowTripList(false), 300);
           }}
         >

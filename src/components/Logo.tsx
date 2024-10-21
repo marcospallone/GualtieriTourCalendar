@@ -9,7 +9,6 @@ function Logo() {
       <Box
         display={"flex"}
         sx={{ cursor: "pointer", justifyContent: 'center' }}
-        onClick={() => router.push("/")}
       >
         <img src={"/images/LogoGT.png"} alt="Gualtieri Tour Logo" />
       </Box>

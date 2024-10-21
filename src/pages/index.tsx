@@ -5,9 +5,11 @@ import AddIcon from "@mui/icons-material/Add";
 import theme from "@/theme/theme";
 import { useRouter } from "next/router";
 import { GetServerSideProps } from "next";
+import { authGuard } from "@/services/authGuard";
 
 const Home: React.FC = () => {
   const router = useRouter();
+
   const handleNewTripClick = () => {
     router.push("/addTrip");
   };
@@ -36,19 +38,5 @@ const Home: React.FC = () => {
 export default Home;
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-  const { req } = context;
-  const cookies = req.headers.cookie || "";
-
-  if (!cookies.includes("auth=true")) {
-    return {
-      redirect: {
-        destination: "/login",
-        permanent: false,
-      },
-    };
-  }
-
-  return {
-    props: {},
-  };
+  return authGuard(context);
 };

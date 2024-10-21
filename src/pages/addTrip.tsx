@@ -7,6 +7,7 @@ import {
   InputLabel,
   MenuItem,
   Select,
+  Snackbar,
   TextField,
   useMediaQuery,
 } from "@mui/material";
@@ -23,6 +24,8 @@ import KeyboardBackspaceIcon from '@mui/icons-material/KeyboardBackspace';
 import "dayjs/locale/it";
 import { useRouter } from "next/router";
 import DoneIcon from '@mui/icons-material/Done';
+import { authGuard } from "@/services/authGuard";
+import { GetServerSideProps } from "next";
 
 interface Vehicle {
   id: number;
@@ -250,3 +253,7 @@ const AddTrip: React.FC = () => {
 };
 
 export default AddTrip;
+
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  return authGuard(context);
+};

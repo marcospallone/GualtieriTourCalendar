@@ -204,7 +204,7 @@ const TripModal: React.FC<TripModalProps> = ({
             <Button
               className={styles.deleteTrip}
               startIcon={<DeleteIcon />}
-              onClick={() => handleDeleteTrip(null, null)}
+              onClick={() => handleDeleteTrip(null)}
             >
               Elimina viaggio
             </Button>

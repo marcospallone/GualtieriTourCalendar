@@ -8,6 +8,7 @@ import {
   List,
   ListItem,
   ListItemText,
+  Snackbar,
   TextField,
   useMediaQuery,
 } from "@mui/material";
@@ -18,6 +19,8 @@ import DoneIcon from "@mui/icons-material/Done";
 import CloseIcon from "@mui/icons-material/Close";
 import { useMemo, useState } from "react";
 import DeleteIcon from "@mui/icons-material/Delete";
+import { GetServerSideProps } from "next";
+import { authGuard } from "@/services/authGuard";
 
 interface Driver {
   id: number;
@@ -28,6 +31,7 @@ const Drivers: React.FC = () => {
   const [drivers, setDrivers] = useState<any[]>([]);
   const [adding, setAdding] = useState(false);
   const [driverName, setDriverName] = useState("");
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
 
   const isMobile = useMediaQuery(theme.breakpoints.down("lg"));
 
@@ -58,6 +62,7 @@ const Drivers: React.FC = () => {
             fetchDrivers();
             setAdding(false);
           }
+          setSnackbarOpen(true);
         } else {
           const errorData = await response.json();
           alert(`Errore nella creazione del veicolo: ${errorData.error}`);
@@ -88,7 +93,7 @@ const Drivers: React.FC = () => {
     }
   };
 
-  const handleDeleteVehicle = async (id: number) => {
+  const handleDeleteDriver = async (id: number) => {
     const conferma = confirm("Sei sicuro di voler eliminare questo autista?");
     if (!conferma) return;
     try {
@@ -97,7 +102,7 @@ const Drivers: React.FC = () => {
       });
       if (response.ok) {
         fetchDrivers();
-        alert("Autista eliminato con successo");
+        setSnackbarOpen(true);
       } else {
         const errorData = await response.json();
         alert(`Errore nell'eliminazione dell'autista: ${errorData.error}`);
@@ -203,6 +208,10 @@ const Drivers: React.FC = () => {
             <>
               <ListItem
                 key={index}
+                sx={{
+                  paddingTop: theme.spacing(12),
+                  paddingBottom: theme.spacing(12),
+                }}
                 secondaryAction={
                   <Box
                     sx={{
@@ -212,7 +221,7 @@ const Drivers: React.FC = () => {
                   >
                     <IconButton
                       aria-label="delete"
-                      onClick={() => handleDeleteVehicle(driver.id)}
+                      onClick={() => handleDeleteDriver(driver.id)}
                       sx={{ color: "#fff" }}
                     >
                       <DeleteIcon />
@@ -227,8 +236,31 @@ const Drivers: React.FC = () => {
           ))}
         </List>
       </Box>
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={2000}
+        onClose={() => setSnackbarOpen(false)}
+        message="Operazione eseguita con successo"
+        sx={{
+          "&.MuiSnackbar-root": {
+            bottom: "65px",
+            backgroundColor: "#018749",
+            borderRadius: theme.spacing(16),
+          },
+        }}
+        ContentProps={{
+          sx: {
+            backgroundColor: "#018749",
+            borderRadius: theme.spacing(16),
+          },
+        }}
+      />
     </Box>
   );
 };
 
 export default Drivers;
+
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  return authGuard(context);
+};

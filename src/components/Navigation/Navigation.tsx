@@ -49,31 +49,29 @@ function Navigation() {
   };
 
   return (
-    <Paper
-    className={styles.navigationPaper}
-      elevation={3}
-    >
+    <Paper className={styles.navigationPaper} elevation={3}>
       <BottomNavigation
         showLabels
         value={value}
         onChange={(event, newValue) => {
-          console.log(newValue);
           setValue(newValue);
         }}
       >
         {sections.map((section, index) => (
           <BottomNavigationAction
+            className={styles.menuAction}
             key={index}
             label={section.label}
             icon={section.icon}
             sx={{
               "&.Mui-selected": {
-                color: "#EB8317",
+                color: "#EB8317 !important",
               },
             }}
           />
         ))}
         <BottomNavigationAction
+          className={styles.logoutAction}
           label={"Logout"}
           icon={<LogoutIcon />}
           onClick={handleLogout}

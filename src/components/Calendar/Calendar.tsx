@@ -1,5 +1,5 @@
 import FullCalendar from "@fullcalendar/react";
-import { Backdrop, Box, Typography, useMediaQuery } from "@mui/material";
+import { Backdrop, Box, Paper, Snackbar, Typography, useMediaQuery } from "@mui/material";
 import * as React from "react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import { useEffect, useState } from "react";
@@ -44,6 +44,7 @@ const Calendar: React.FC = () => {
   const [drivers, setDrivers] = useState<any[]>([]);
   const [actualDay, setActualDay] = useState<any>();
   const [translateY, setTranslateY] = useState(0);
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
 
   const isMobile = useMediaQuery(theme.breakpoints.down("lg"));
 
@@ -131,6 +132,7 @@ const Calendar: React.FC = () => {
       if (response.ok) {
         await fetchTrips();
         setModalOpen(false);
+        setSnackbarOpen(true);
       } else {
         const errorData = await response.json();
         alert(`Errore nella modifica del viaggio: ${errorData.error}`);
@@ -141,17 +143,14 @@ const Calendar: React.FC = () => {
     }
   };
 
-  const handleDeleteTrip = async (id: any, date: any) => {
+  const handleDeleteTrip = async (id: any) => {
     const conferma = confirm("Sei sicuro di voler eliminare questo viaggio?");
     if (!conferma) return;
 
     try {
-      const response = await fetch(
-        `/api/trips/${isMobile ? id : idEventInModal}`,
-        {
-          method: "DELETE",
-        }
-      );
+      const response = await fetch(`/api/trips/${idEventInModal}`, {
+        method: "DELETE",
+      });
 
       if (response.ok) {
         await fetchTrips();
@@ -162,6 +161,7 @@ const Calendar: React.FC = () => {
           handleCellClick(info);
         }
         setModalOpen(false);
+        setSnackbarOpen(true);
       } else {
         const errorData = await response.json();
         alert(`Errore nell'eliminazione del viaggio: ${errorData.error}`);
@@ -260,6 +260,12 @@ const Calendar: React.FC = () => {
     }
   };
 
+  useEffect(() => {
+    if(dayTrips.length == 0){
+      setShowTripList(false);
+    };
+  }, [dayTrips]);
+
   const handleEventClick = (info: any) => {
     if (isMobile) {
       setIdEventInModal(info.id);
@@ -349,6 +355,25 @@ const Calendar: React.FC = () => {
         setDateEventInModal={setDateEventInModal}
         setVehicleEventInModal={setVehicleEventInModal}
         setDriverEventInModal={setDriverEventInModal}
+      />
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={2000}
+        onClose={() => setSnackbarOpen(false)}
+        message="Operazione eseguita con successo"
+        sx={{
+          "&.MuiSnackbar-root": {
+            bottom: "65px",
+            backgroundColor: "#018749",
+            borderRadius: theme.spacing(16),
+          },
+        }}
+        ContentProps={{
+          sx: {
+            backgroundColor: "#018749",
+            borderRadius: theme.spacing(16),
+          },
+        }}
       />
     </>
   );

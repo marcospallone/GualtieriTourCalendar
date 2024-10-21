@@ -8,6 +8,7 @@ import {
   List,
   ListItem,
   ListItemText,
+  Snackbar,
   TextField,
   useMediaQuery,
 } from "@mui/material";
@@ -18,6 +19,8 @@ import DoneIcon from "@mui/icons-material/Done";
 import CloseIcon from "@mui/icons-material/Close";
 import { useMemo, useState } from "react";
 import DeleteIcon from "@mui/icons-material/Delete";
+import { GetServerSideProps } from "next";
+import { authGuard } from "@/services/authGuard";
 
 interface Vehicle {
   id: number;
@@ -28,6 +31,7 @@ const Vehicles: React.FC = () => {
   const [vehicles, setVehicles] = useState<any[]>([]);
   const [adding, setAdding] = useState(false);
   const [vehicleName, setVehicleName] = useState("");
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
 
   const isMobile = useMediaQuery(theme.breakpoints.down("lg"));
 
@@ -58,6 +62,7 @@ const Vehicles: React.FC = () => {
             fetchVehicles();
             setAdding(false);
           }
+          setSnackbarOpen(true)
         } else {
           const errorData = await response.json();
           alert(`Errore nella creazione del veicolo: ${errorData.error}`);
@@ -97,7 +102,7 @@ const Vehicles: React.FC = () => {
       });
       if (response.ok) {
         fetchVehicles();
-        alert("Veicolo eliminato con successo");
+        setSnackbarOpen(true)
       } else {
         const errorData = await response.json();
         alert(`Errore nell'eliminazione del veicolo: ${errorData.error}`);
@@ -231,8 +236,31 @@ const Vehicles: React.FC = () => {
           ))}
         </List>
       </Box>
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={2000}
+        onClose={() => setSnackbarOpen(false)}
+        message="Operazione eseguita con successo"
+        sx={{
+          "&.MuiSnackbar-root": {
+            bottom: "65px",
+            backgroundColor: "#018749",
+            borderRadius: theme.spacing(16),
+          },
+        }}
+        ContentProps={{
+          sx: {
+            backgroundColor: "#018749",
+            borderRadius: theme.spacing(16),
+          },
+        }}
+      />
     </Box>
   );
 };
 
 export default Vehicles;
+
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  return authGuard(context);
+};

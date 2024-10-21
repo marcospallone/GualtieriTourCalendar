@@ -3,6 +3,12 @@ import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
 
 export default async function handler(req: any, res: any) {
+  const cookies = req.headers.cookie || '';
+
+  if (!cookies.includes('auth=true')) {
+    return res.status(401).json({ error: 'Non autorizzato' });
+  }
+  
   const { id } = req.query;
 
   if (req.method === 'DELETE') {

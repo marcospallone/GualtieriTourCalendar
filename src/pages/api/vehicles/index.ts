@@ -3,18 +3,22 @@ import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
 export default async function handler(req: any, res: any) {
+  const cookies = req.headers.cookie || '';
+
+  if (!cookies.includes('auth=true')) {
+    return res.status(401).json({ error: 'Non autorizzato' });
+  }
+  
   if (req.method === "GET") {
     try {
-      const vehicles = await prisma.vehicle.findMany({
-        // include: {},
-      });
+      const vehicles = await prisma.vehicle.findMany({});
       res.status(200).json(vehicles);
     } catch (error) {
       console.error(error);
       res.status(500).json({ error: "Errore nel recupero dei veicoli" });
     }
   } else if (req.method === "POST") {
-    const { name, trips } = req.body;
+    const { name } = req.body;
     try {
       const vehicle = await prisma.vehicle.create({
         data: {
