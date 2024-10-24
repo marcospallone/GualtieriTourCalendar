@@ -179,7 +179,7 @@ const TripModal: React.FC<TripModalProps> = ({
               </Select>
             </FormControl>
           </Box>
-          <Box>
+          <Box textAlign={'center'}>
             <Button
               className={styles.saveTrip}
               startIcon={<DoneIcon />}
@@ -200,7 +200,7 @@ const TripModal: React.FC<TripModalProps> = ({
               </Typography>
             </Divider>
           </Box>
-          <Box>
+          <Box textAlign={'center'}>
             <Button
               className={styles.deleteTrip}
               startIcon={<DeleteIcon />}

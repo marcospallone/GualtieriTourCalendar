@@ -6,25 +6,26 @@
   left: 0;
   right: 0;
   padding: toRem(16);
-  border-radius: toRem(16) toRem(16) 0 0;
+  border-radius: toRem(16) toRem(16) 0 0 !important;
+  color: #2c3e50 !important;
   z-index: 1;
-}
 
-.closePaper {
-  background-color: #f4f6ff;
-  color: #2c3e50;
-  padding: toRem(6);
-  border-radius: 50%;
-}
+  .closePaper {
+    background-color: #f4f6ff;
+    color: #2c3e50;
+    padding: toRem(6);
+    border-radius: 50%;
+  }
 
-.editTrip {
-  background-color: #f3c623;
-  color: #fff;
-  padding: toRem(6) toRem(12);
-  border-radius: toRem(12);
-}
+  .editTrip {
+    background-color: #f3c623;
+    color: #fff;
+    padding: toRem(6) toRem(12);
+    border-radius: toRem(12);
+  }
 
-.paperDivider{
+  .paperDivider {
     margin-top: toRem(4);
     margin-bottom: toRem(4);
+  }
 }

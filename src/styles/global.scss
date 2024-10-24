@@ -1,7 +1,7 @@
 @import 'toRem';
 
 html, body, .MuiTypography-root, .MuiButton-root, .MuiInputBase-input, .MuiInputLabel-root, .MuiBottomNavigationAction-label {
-    font-family: 'Montserrat', sans-serif;
+    font-family: 'Montserrat', sans-serif !important;
 }
 
 body{
@@ -9,8 +9,12 @@ body{
     background-color: #F4F6FF;
 }
 
-.MuiTypography-root{
+.MuiTypography-root, .fc-toolbar-title, .fc th, .fc-daygrid-day-top {
     color: #2C3E50;
+}
+
+.MuiInputBase-input {
+    color: #2C3E50 !important;
 }
 
 .main-box{

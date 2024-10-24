@@ -1,0 +1,12 @@
+{
+    "name": "Gualtieri Tour Calendar",
+    "short_name": "GualtieriTour",
+    "description": "Agenda condivisa Gualtieri Tour",
+    "start_url": "/",
+    "background_color": "#ffffff",
+    "theme_color": "#000000",
+    "display": "standalone",
+    "icons": [
+    
+    ]
+  }
