@@ -78,7 +78,10 @@ function Sidebar() {
           </List>
         </Box>
         <List>
-          <ListItem className={styles.menuListItem} onClick={handleLogout}>
+          <ListItem
+            onClick={handleLogout}
+            sx={{ paddingLeft: 0, paddingRight: 0, cursor: "pointer" }}
+          >
             <ListItemIcon sx={{ color: "#fff" }}>
               <LogoutIcon />
             </ListItemIcon>
