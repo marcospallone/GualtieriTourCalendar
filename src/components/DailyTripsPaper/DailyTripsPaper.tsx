@@ -10,7 +10,6 @@ import {
   Typography,
 } from "@mui/material";
 import theme from "@/theme/theme";
-import { useState } from "react";
 import CloseIcon from "@mui/icons-material/Close";
 import EditIcon from "@mui/icons-material/Edit";
 import styles from "./DailyTripsPaper.module.scss";

@@ -1,6 +1,7 @@
 import {
   Box,
   Button,
+  CircularProgress,
   Divider,
   Fade,
   FormControl,
@@ -32,6 +33,7 @@ const Vehicles: React.FC = () => {
   const [adding, setAdding] = useState(false);
   const [vehicleName, setVehicleName] = useState("");
   const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const isMobile = useMediaQuery(theme.breakpoints.down("lg"));
 
@@ -62,7 +64,7 @@ const Vehicles: React.FC = () => {
             fetchVehicles();
             setAdding(false);
           }
-          setSnackbarOpen(true)
+          setSnackbarOpen(true);
         } else {
           const errorData = await response.json();
           alert(`Errore nella creazione del veicolo: ${errorData.error}`);
@@ -77,6 +79,7 @@ const Vehicles: React.FC = () => {
   };
 
   const fetchVehicles = async () => {
+    setIsLoading(true);
     try {
       const response = await fetch("/api/vehicles");
       if (!response.ok) {
@@ -91,6 +94,7 @@ const Vehicles: React.FC = () => {
     } catch (error) {
       console.error(error);
     }
+    setIsLoading(false);
   };
 
   const handleDeleteVehicle = async (id: number) => {
@@ -102,7 +106,7 @@ const Vehicles: React.FC = () => {
       });
       if (response.ok) {
         fetchVehicles();
-        setSnackbarOpen(true)
+        setSnackbarOpen(true);
       } else {
         const errorData = await response.json();
         alert(`Errore nell'eliminazione del veicolo: ${errorData.error}`);
@@ -117,7 +121,14 @@ const Vehicles: React.FC = () => {
     fetchVehicles();
   }, []);
 
-  return (
+  return isLoading ? (
+    <CircularProgress
+      sx={{
+        marginLeft: isMobile ? "45%" : "50%",
+        marginTop: isMobile ? "50%" : "30%",
+      }}
+    />
+  ) : (
     <Box className={"main-box"}>
       {adding ? (
         <Fade in={adding} timeout={500}>

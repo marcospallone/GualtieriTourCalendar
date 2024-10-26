@@ -1,6 +1,7 @@
 import {
   Box,
   Button,
+  CircularProgress,
   Divider,
   Fade,
   FormControl,
@@ -32,6 +33,7 @@ const Drivers: React.FC = () => {
   const [adding, setAdding] = useState(false);
   const [driverName, setDriverName] = useState("");
   const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const isMobile = useMediaQuery(theme.breakpoints.down("lg"));
 
@@ -77,6 +79,7 @@ const Drivers: React.FC = () => {
   };
 
   const fetchDrivers = async () => {
+    setIsLoading(true);
     try {
       const response = await fetch("/api/drivers");
       if (!response.ok) {
@@ -91,6 +94,7 @@ const Drivers: React.FC = () => {
     } catch (error) {
       console.error(error);
     }
+    setIsLoading(false);
   };
 
   const handleDeleteDriver = async (id: number) => {
@@ -117,7 +121,14 @@ const Drivers: React.FC = () => {
     fetchDrivers();
   }, []);
 
-  return (
+  return isLoading ? (
+    <CircularProgress
+      sx={{
+        marginLeft: isMobile ? "45%" : "50%",
+        marginTop: isMobile ? "50%" : "30%",
+      }}
+    />
+  ) : (
     <Box className={"main-box"}>
       {adding ? (
         <Fade in={adding} timeout={500}>

@@ -1,5 +1,13 @@
 import FullCalendar from "@fullcalendar/react";
-import { Backdrop, Box, Paper, Snackbar, Typography, useMediaQuery } from "@mui/material";
+import {
+  Backdrop,
+  Box,
+  CircularProgress,
+  Paper,
+  Snackbar,
+  Typography,
+  useMediaQuery,
+} from "@mui/material";
 import * as React from "react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import { useEffect, useState } from "react";
@@ -45,6 +53,7 @@ const Calendar: React.FC = () => {
   const [actualDay, setActualDay] = useState<any>();
   const [translateY, setTranslateY] = useState(0);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const isMobile = useMediaQuery(theme.breakpoints.down("lg"));
 
@@ -55,6 +64,7 @@ const Calendar: React.FC = () => {
   }, []);
 
   const fetchTrips = async () => {
+    setIsLoading(true);
     try {
       const response = await fetch("/api/trips");
       if (!response.ok) {
@@ -69,10 +79,12 @@ const Calendar: React.FC = () => {
         driverName: trip.driverName,
       }));
       setTrips(formattedEvents);
+      setIsLoading(false);
       return formattedEvents;
     } catch (error) {
       console.error(error);
     }
+    setIsLoading(false);
   };
 
   useEffect(() => {
@@ -115,6 +127,7 @@ const Calendar: React.FC = () => {
   };
 
   const handleSaveTrip = async () => {
+    setIsLoading(true);
     try {
       const response = await fetch(`/api/trips/${idEventInModal}`, {
         method: "PUT",
@@ -141,6 +154,7 @@ const Calendar: React.FC = () => {
       console.error("Errore nella chiamata PUT:", error);
       alert("Errore durante la modifica del viaggio. Riprova più tardi.");
     }
+    setIsLoading(false);
   };
 
   const handleDeleteTrip = async (id: any) => {
@@ -261,9 +275,9 @@ const Calendar: React.FC = () => {
   };
 
   useEffect(() => {
-    if(dayTrips.length == 0){
+    if (dayTrips.length == 0) {
       setShowTripList(false);
-    };
+    }
   }, [dayTrips]);
 
   const handleEventClick = (info: any) => {
@@ -293,7 +307,14 @@ const Calendar: React.FC = () => {
     setShowTripList(value);
   };
 
-  return (
+  return isLoading ? (
+    <CircularProgress
+      sx={{
+        marginLeft: isMobile ? "45%" : "50%",
+        marginTop: isMobile ? "50%" : "30%",
+      }}
+    />
+  ) : (
     <>
       <Box sx={{ filter: modalOpen ? "blur(8px)" : "none" }}>
         <Box marginTop={theme.spacing(16)}>
