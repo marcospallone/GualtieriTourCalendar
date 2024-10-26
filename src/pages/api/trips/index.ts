@@ -1,7 +1,8 @@
 import { PrismaClient } from "@prisma/client";
 
-const prisma = new PrismaClient();
-
+const prisma = new PrismaClient({
+  log: ['query', 'info', 'warn', 'error'],
+});
 export default async function handler(req: any, res: any) {
   const cookies = req.headers.cookie || '';
 
@@ -13,9 +14,9 @@ export default async function handler(req: any, res: any) {
     try {
       const trips = await prisma.trip.findMany({});
       res.status(200).json(trips);
-    } catch (error) {
+    } catch (error:any) {
       console.error(error);
-      res.status(500).json({ error: "Errore nel recupero dei viaggi" });
+      res.status(500).json({ error: error.message });
     } finally {
       await prisma.$disconnect();
     }
