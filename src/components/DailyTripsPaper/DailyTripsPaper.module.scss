@@ -9,6 +9,8 @@
   border-radius: toRem(16) toRem(16) 0 0 !important;
   color: #2c3e50 !important;
   z-index: 2;
+  max-height: 90%;
+  overflow-y: scroll;
 
   .closePaper {
     background-color: #f4f6ff;

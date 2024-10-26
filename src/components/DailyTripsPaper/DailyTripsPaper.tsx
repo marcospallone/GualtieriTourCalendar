@@ -26,51 +26,16 @@ const DailyTripsPaper: React.FC<DailyTripsPaperProps> = ({
   updateShowTripList,
   handleEventClick,
 }) => {
-  const [translateY, setTranslateY] = useState(0);
-  const [touchStartY, setTouchStartY] = useState(0);
-  const [isSwiping, setIsSwiping] = useState(false);
-
-  const handleTouchStart = (e: any) => {
-    setTouchStartY(e.touches[0].clientY);
-    setIsSwiping(true);
-  };
-
-  const handleTouchMove = (e: any) => {
-    const touchEndY = e.touches[0].clientY;
-    const swipeDistance = touchEndY - touchStartY;
-
-    if (swipeDistance > 0) {
-      setTranslateY(swipeDistance);
-    }
-  };
-
-  const handleTouchEnd = () => {
-    setIsSwiping(false);
-    if (translateY > 50) {
-      setTranslateY(400);
-      setTimeout(() => updateShowTripList(false), 300);
-    } else {
-      setTranslateY(0);
-    }
-  };
 
   return (
     <Paper
       className={styles.tripPaper}
-      sx={{
-        transform: `translateY(${translateY}px)`,
-        transition: isSwiping ? "none" : "transform 0.5s ease-out",
-      }}
       elevation={24}
-      onTouchStart={handleTouchStart}
-      onTouchMove={handleTouchMove}
-      onTouchEnd={handleTouchEnd}
     >
       <Box display={"flex"} justifyContent={"flex-end"}>
         <IconButton
           className={styles.closePaper}
           onClick={() => {
-            setTranslateY(400);
             setTimeout(() => updateShowTripList(false), 300);
           }}
         >
