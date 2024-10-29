@@ -10,6 +10,10 @@ const validUsers = [
     username: process.env.USER2_USERNAME,
     passwordHash: process.env.USER2_PASSWORD_HASH,
   },
+  {
+    username: process.env.USER3_USERNAME,
+    passwordHash: process.env.USER3_PASSWORD_HASH,
+  }
 ];
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
