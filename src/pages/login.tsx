@@ -53,9 +53,6 @@ const Login = () => {
           <Logo />
         </Box>
       )}
-      <Typography className={styles.loginTitle} variant="h6" component={"h1"}>
-        Login
-      </Typography>
       {error && (
         <Typography variant="body1" component={"p"} style={{ color: "red" }}>
           {error}
