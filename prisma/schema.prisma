@@ -30,3 +30,9 @@ model Driver {
   id          Int      @id @default(autoincrement())
   name        String
 }
+
+model Service {
+  id          Int      @id @default(autoincrement())
+  driver      String
+  activity    String
+}

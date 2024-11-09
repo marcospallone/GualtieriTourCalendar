@@ -6,12 +6,18 @@ import AirportShuttleIcon from "@mui/icons-material/AirportShuttle";
 import PersonIcon from "@mui/icons-material/Person";
 import LogoutIcon from "@mui/icons-material/Logout";
 import styles from "./Navigation.module.scss";
+import AssignmentIcon from '@mui/icons-material/Assignment';
 
 const sections = [
   {
     label: "Viaggi",
     url: "/",
     icon: <SignpostIcon />,
+  },
+  {
+    label: "Servizi",
+    url: "/services",
+    icon: <AssignmentIcon />,
   },
   {
     label: "Veicoli",
@@ -31,7 +37,7 @@ function Navigation() {
   const [value, setValue] = useState(0);
 
   useEffect(() => {
-    if (value != 3) {
+    if (value != 4) {
       router.push(sections[Number(value)].url);
     }
   }, [value]);

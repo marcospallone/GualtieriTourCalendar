@@ -35,39 +35,19 @@ interface Driver {
   name: string;
 }
 
-const AddTrip: React.FC = () => {
+const AddService: React.FC = () => {
   const [date, setDate] = useState<Dayjs>();
-  const [tripTitle, setTripTitle] = useState<string>("");
-  const [driverName, setDriverName] = useState<string>("");
-  const [vehicleName, setVehicleName] = useState<string>("");
+  const [driver, setDriver] = useState<string>("");
+  const [activity, setActivity] = useState<string>("");
   const [drivers, setDrivers] = useState<any[]>([]);
-  const [vehicles, setVehicles] = useState<any[]>([]);
 
   const isMobile = useMediaQuery(theme.breakpoints.down("lg"));
 
   const router = useRouter();
 
   useEffect(() => {
-    fetchVehicles();
     fetchDrivers();
   }, []);
-
-  const fetchVehicles = async () => {
-    try {
-      const response = await fetch("/api/vehicles");
-      if (!response.ok) {
-        throw new Error("Errore durante il recupero dei veicoli");
-      }
-      const data: Vehicle[] = await response.json();
-      const formattedVehicles = data.map((vehicle) => ({
-        id: vehicle.id.toString(),
-        name: vehicle.name,
-      }));
-      setVehicles(formattedVehicles);
-    } catch (error) {
-      console.error(error);
-    }
-  };
 
   const fetchDrivers = async () => {
     try {
@@ -86,33 +66,31 @@ const AddTrip: React.FC = () => {
     }
   };
 
-  const handleSaveTrip = async () => {
+  const handleSaveService = async () => {
     try {
-      if (date && tripTitle) {
-        const response = await fetch("/api/trips", {
+      if (date && driver) {
+        const response = await fetch("/api/services", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            date,
-            tripTitle,
-            vehicleName,
-            driverName,
+            driver,
+            activity
           }),
         });
         if (response.ok) {
           router.push("/");
         } else {
           const errorData = await response.json();
-          alert(`Errore nella creazione del viaggio: ${errorData.error}`);
+          alert(`Errore nella creazione del servizio: ${errorData.error}`);
         }
       } else {
-        alert("Compila i campi descrizione e data!");
+        alert("Compila i campi autista e attività!");
       }
     } catch (error) {
       console.error("Errore nella chiamata POST:", error);
-      alert("Errore nella creazione del viaggio. Riprova più tardi.");
+      alert("Errore nella creazione del servizio. Riprova più tardi.");
     }
   };
 
@@ -126,74 +104,13 @@ const AddTrip: React.FC = () => {
       >
         <Box>
           <FormControl fullWidth>
-            <TextField
-              label="Descrizione"
-              variant="outlined"
-              value={tripTitle}
-              onChange={(event) => setTripTitle(event?.target?.value)}
-            />
-          </FormControl>
-        </Box>
-        <Box>
-          <FormControl fullWidth>
-            <LocalizationProvider
-              dateAdapter={AdapterDayjs}
-              adapterLocale="it"
-              localeText={
-                itIT.components.MuiLocalizationProvider.defaultProps.localeText
-              }
-            >
-              <DateTimePicker
-                label={"Data"}
-                value={date}
-                onChange={(date) => (date ? setDate(date) : null)}
-                format="dddd - DD/MM/YYYY - hh:mm"
-                views={["day", "month", "year", "hours", "minutes"]}
-                slots={{
-                  textField: TextField,
-                }}
-                slotProps={{
-                  textField: {
-                    inputProps: {
-                      readOnly: true,
-                    },
-                  },
-                }}
-              />
-            </LocalizationProvider>
-          </FormControl>
-        </Box>
-        <Box>
-          <FormControl fullWidth>
-            <InputLabel id="select-vehicle-label">Veicolo</InputLabel>
-            <Select
-              labelId="select-vehicle-label"
-              id="select-vehicle-label"
-              value={vehicleName}
-              label="Veicolo"
-              onChange={(event) => setVehicleName(event?.target?.value)}
-            >
-              {vehicles.length > 0 ? (
-                vehicles.map((vehicle, index) => (
-                  <MenuItem key={index} value={vehicle.name}>
-                    {vehicle.name}
-                  </MenuItem>
-                ))
-              ) : (
-                <MenuItem value={""}>{"Nessun veicolo presente"}</MenuItem>
-              )}
-            </Select>
-          </FormControl>
-        </Box>
-        <Box>
-          <FormControl fullWidth>
             <InputLabel id="select-driver-label">Autista</InputLabel>
             <Select
               labelId="select-driver-label"
               id="select-driver-label"
-              value={driverName}
+              value={driver}
               label="Autista"
-              onChange={(event) => setDriverName(event?.target?.value)}
+              onChange={(event) => setDriver(event?.target?.value)}
             >
               {drivers.length > 0 ? (
                 drivers.map((driver, index) => (
@@ -205,6 +122,16 @@ const AddTrip: React.FC = () => {
                 <MenuItem value={""}>{"Nessun autista presente"}</MenuItem>
               )}
             </Select>
+          </FormControl>
+        </Box>
+        <Box>
+          <FormControl fullWidth>
+            <TextField
+              label="Attività"
+              variant="outlined"
+              value={activity}
+              onChange={(event) => setActivity(event?.target?.value)}
+            />
           </FormControl>
         </Box>
       </Box>
@@ -225,7 +152,7 @@ const AddTrip: React.FC = () => {
               fontSize: !isMobile ? theme.spacing(18) : 'normal'
             }}
             startIcon={<DoneIcon />}
-            onClick={handleSaveTrip}
+            onClick={handleSaveService}
           >
             Salva
           </Button>
@@ -250,7 +177,7 @@ const AddTrip: React.FC = () => {
   );
 };
 
-export default AddTrip;
+export default AddService;
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   return authGuard(context);
