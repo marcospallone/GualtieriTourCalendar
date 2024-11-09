@@ -12,30 +12,28 @@ import {
 import theme from "@/theme/theme";
 import CloseIcon from "@mui/icons-material/Close";
 import EditIcon from "@mui/icons-material/Edit";
-import styles from "./DailyTripsPaper.module.scss";
+import styles from "./DailyEventsPaper.module.scss";
 
-interface DailyTripsPaperProps {
-  dayTrips: any[];
-  updateShowTripList: any;
+interface DailyEventsPaperProps {
+  dayEvents: any[];
+  updateShowEventList: any;
   handleEventClick: any;
+  isServices: boolean;
 }
 
-const DailyTripsPaper: React.FC<DailyTripsPaperProps> = ({
-  dayTrips,
-  updateShowTripList,
+const DailyEventsPaper: React.FC<DailyEventsPaperProps> = ({
+  dayEvents: dayEvents,
+  updateShowEventList: updateShowEventList,
   handleEventClick,
+  isServices,
 }) => {
-
   return (
-    <Paper
-      className={styles.tripPaper}
-      elevation={24}
-    >
+    <Paper className={styles.eventPaper} elevation={24}>
       <Box display={"flex"} justifyContent={"flex-end"}>
         <IconButton
           className={styles.closePaper}
           onClick={() => {
-            setTimeout(() => updateShowTripList(false), 300);
+            setTimeout(() => updateShowEventList(false), 300);
           }}
         >
           <CloseIcon />
@@ -43,8 +41,10 @@ const DailyTripsPaper: React.FC<DailyTripsPaperProps> = ({
       </Box>
       <Box>
         <List disablePadding>
-          {dayTrips.map((trip: any, index: any) => {
-            const validDate = new Date(trip.start);
+          {dayEvents.map((event: any, index: any) => {
+            const validDate = isServices
+              ? new Date(event.date)
+              : new Date(event.start);
             const formattedDay = new Intl.DateTimeFormat("it-IT", {
               day: "2-digit",
               month: "long",
@@ -68,7 +68,7 @@ const DailyTripsPaper: React.FC<DailyTripsPaperProps> = ({
                         variant="body1"
                         fontWeight={"bold"}
                       >
-                        {trip.title}
+                        {event.title}
                       </Typography>
                     </Box>
                     <Box>
@@ -92,21 +92,37 @@ const DailyTripsPaper: React.FC<DailyTripsPaperProps> = ({
                         Autista:{" "}
                       </Typography>
                       <Typography component={"span"} variant="body1">
-                        {trip.driverName || "-"}
+                        {isServices ? event.driver : event.driverName || "-"}
                       </Typography>
                     </Box>
-                    <Box>
-                      <Typography
-                        component={"span"}
-                        variant="body1"
-                        fontWeight={"bold"}
-                      >
-                        Veicolo:{" "}
-                      </Typography>
-                      <Typography component={"span"} variant="body1">
-                        {trip.vehicleName || "-"}
-                      </Typography>
-                    </Box>
+                    {!isServices && (
+                      <Box>
+                        <Typography
+                          component={"span"}
+                          variant="body1"
+                          fontWeight={"bold"}
+                        >
+                          Veicolo:{" "}
+                        </Typography>
+                        <Typography component={"span"} variant="body1">
+                          {event.vehicleName || "-"}
+                        </Typography>
+                      </Box>
+                    )}
+                    {isServices && (
+                      <Box>
+                        <Typography
+                          component={"span"}
+                          variant="body1"
+                          fontWeight={"bold"}
+                        >
+                          Attività:{" "}
+                        </Typography>
+                        <Typography component={"span"} variant="body1">
+                          {event.activity || "-"}
+                        </Typography>
+                      </Box>
+                    )}
                     <Box
                       display={"flex"}
                       justifyContent={"center"}
@@ -115,8 +131,8 @@ const DailyTripsPaper: React.FC<DailyTripsPaperProps> = ({
                     >
                       <Box>
                         <Button
-                          className={styles.editTrip}
-                          onClick={() => handleEventClick(trip)}
+                          className={styles.editEvent}
+                          onClick={() => handleEventClick(event)}
                           endIcon={<EditIcon />}
                         >
                           Modifica
@@ -125,7 +141,7 @@ const DailyTripsPaper: React.FC<DailyTripsPaperProps> = ({
                     </Box>
                   </Box>
                 </ListItem>
-                {index < dayTrips.length - 1 && (
+                {index < dayEvents.length - 1 && (
                   <Divider
                     className={styles.paperDivider}
                     variant="middle"
@@ -142,4 +158,4 @@ const DailyTripsPaper: React.FC<DailyTripsPaperProps> = ({
   );
 };
 
-export default DailyTripsPaper;
+export default DailyEventsPaper;

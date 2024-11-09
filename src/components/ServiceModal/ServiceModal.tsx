@@ -18,6 +18,9 @@ import styles from "./ServiceModal.module.scss";
 import CloseIcon from "@mui/icons-material/Close";
 import DeleteIcon from "@mui/icons-material/Delete";
 import DoneIcon from "@mui/icons-material/Done";
+import { LocalizationProvider, DateTimePicker } from "@mui/x-date-pickers";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { itIT } from "@mui/x-date-pickers/locales";
 
 interface ServiceModalProps {
   modalOpen: boolean;
@@ -25,10 +28,12 @@ interface ServiceModalProps {
   drivers: any[];
   handleSaveService: any;
   handleDeleteService: any;
+  dateServiceInModal: any;
   driverServiceInModal: string;
   activityServiceInModal: any;
+  setDateServiceInModal: (date: any) => void;
   setDriverServiceInModal: (value: string) => void;
-  setActivityServiceInModal: (date: any) => void;
+  setActivityServiceInModal: (activity: any) => void;
 }
 
 const ServiceModal: React.FC<ServiceModalProps> = ({
@@ -37,8 +42,10 @@ const ServiceModal: React.FC<ServiceModalProps> = ({
   drivers,
   handleSaveService: handleSaveService,
   handleDeleteService: handleDeleteService,
+  dateServiceInModal: dateServiceInModal,
   driverServiceInModal: driverServiceInModal,
   activityServiceInModal: activityServiceInModal,
+  setDateServiceInModal: setDateServiceInModal,
   setDriverServiceInModal: setDriverServiceInModal,
   setActivityServiceInModal: setActivityServiceInModal,
 }) => {
@@ -76,6 +83,36 @@ const ServiceModal: React.FC<ServiceModalProps> = ({
         >
           <Box>
             <FormControl fullWidth>
+              <LocalizationProvider
+                dateAdapter={AdapterDayjs}
+                adapterLocale="it"
+                localeText={
+                  itIT.components.MuiLocalizationProvider.defaultProps
+                    .localeText
+                }
+              >
+                <DateTimePicker
+                  label={"Data"}
+                  value={dateServiceInModal}
+                  onChange={(date) => (date ? setDateServiceInModal(date) : null)}
+                  format="dddd - DD/MM/YYYY - hh:mm"
+                  views={["day", "month", "year", "hours", "minutes"]}
+                  slots={{
+                    textField: TextField,
+                  }}
+                  slotProps={{
+                    textField: {
+                      inputProps: {
+                        readOnly: true,
+                      },
+                    },
+                  }}
+                />
+              </LocalizationProvider>
+            </FormControl>
+          </Box>
+          <Box>
+            <FormControl fullWidth>
               <InputLabel id="select-driver-label">Autista</InputLabel>
               <Select
                 labelId="select-driver-label"
@@ -106,11 +143,13 @@ const ServiceModal: React.FC<ServiceModalProps> = ({
                 label="Attività"
                 variant="outlined"
                 value={activityServiceInModal}
-                onChange={(event) => setActivityServiceInModal(event?.target?.value)}
+                onChange={(event) =>
+                  setActivityServiceInModal(event?.target?.value)
+                }
               />
             </FormControl>
           </Box>
-          <Box textAlign={'center'}>
+          <Box textAlign={"center"}>
             <Button
               className={styles.saveService}
               startIcon={<DoneIcon />}
@@ -131,7 +170,7 @@ const ServiceModal: React.FC<ServiceModalProps> = ({
               </Typography>
             </Divider>
           </Box>
-          <Box textAlign={'center'}>
+          <Box textAlign={"center"}>
             <Button
               className={styles.deleteService}
               startIcon={<DeleteIcon />}

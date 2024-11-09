@@ -34,7 +34,7 @@ export default async function handler(req: any, res: any) {
       res.status(201).json(trip);
     } catch (error) {
       console.log(error);
-      res.status(500).json({ error: "Errore nella creazione del viaggiox" });
+      res.status(500).json({ error: "Errore nella creazione del viaggio" });
     } finally {
       await prisma.$disconnect();
     }

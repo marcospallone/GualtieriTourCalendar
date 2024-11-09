@@ -7,12 +7,12 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  const cookies = req.headers.cookie || '';
+  const cookies = req.headers.cookie || "";
 
-  if (!cookies.includes('auth=true')) {
-    return res.status(401).json({ error: 'Non autorizzato' });
+  if (!cookies.includes("auth=true")) {
+    return res.status(401).json({ error: "Non autorizzato" });
   }
-  
+
   const { id } = req.query;
 
   if (req.method === "PUT") {
@@ -22,20 +22,23 @@ export default async function handler(
         return res.status(400).json({ error: "ID del servizio non valido" });
       }
 
-      const { driver, activity } = req.body;
+      const { date, driver, activity } = req.body;
 
       const updatedService = await prisma.service.update({
         where: { id: serviceId },
         data: {
+          date,
           driver,
-          activity
+          activity,
         },
       });
 
       res.status(200).json(updatedService);
     } catch (error) {
       console.error(error);
-      res.status(500).json({ error: "Errore durante la modifica del servizio" });
+      res
+        .status(500)
+        .json({ error: "Errore durante la modifica del servizio" });
     } finally {
       await prisma.$disconnect();
     }
@@ -57,8 +60,8 @@ export default async function handler(
         .status(500)
         .json({ error: "Errore durante l'eliminazione del servizio" });
     } finally {
-        await prisma.$disconnect();
-      }
+      await prisma.$disconnect();
+    }
   } else {
     res.setHeader("Allow", ["PUT", "DELETE"]);
     res.status(405).end(`Metodo ${req.method} non consentito`);

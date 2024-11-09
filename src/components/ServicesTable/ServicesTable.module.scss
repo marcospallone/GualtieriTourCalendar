@@ -1,0 +1,33 @@
+@import "../../styles/toRem";
+
+.serviceContent {
+  background-color: #eb8317;
+  border-radius: toRem(16);
+  padding: toRem(6);
+  cursor: pointer;
+}
+
+.dayNumber {
+  text-align: right;
+}
+
+.serviceCount {
+  background-color: #eb8317;
+  color: #10375c;
+  display: flex;
+  justify-content: center;
+  padding: toRem(4);
+  border-radius: 30%;
+  margin-top: toRem(6);
+}
+
+.backdropPaper {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(5px);
+  z-index: 1;
+}

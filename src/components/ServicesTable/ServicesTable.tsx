@@ -16,19 +16,20 @@ import interactionPlugin from "@fullcalendar/interaction";
 import theme from "@/theme/theme";
 import "dayjs/locale/it";
 import dayjs from "dayjs";
-import DailyTripsPaper from "../DailyTripsPaper/DailyTripsPaper";
+import DailyEventsPaper from "../DailyEventsPaper/DailyEventsPaper";
 import styles from "./ServicesTable.module.scss";
 import ServiceModal from "../ServiceModal/ServiceModal";
 
 interface Service {
-    id:any;
-    driver:string;
-    activity:string;
+  id: any;
+  date: any;
+  driver: string;
+  activity: string;
 }
 
 interface Driver {
-    id:any;
-    name:string;
+  id: any;
+  name: string;
 }
 
 const ServicesTable: React.FC = () => {
@@ -37,6 +38,7 @@ const ServicesTable: React.FC = () => {
   const [showServiceList, setShowServiceList] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
   const [idServiceInModal, setIdServiceInModal] = useState<any>({});
+  const [dateServiceInModal, setDateServiceInModal] = useState<any>({});
   const [driverServiceInModal, setDriverServiceInModal] = useState<any>({});
   const [activityServiceInModal, setActivityServiceInModal] = useState<any>();
   const [drivers, setDrivers] = useState<any[]>([]);
@@ -62,6 +64,7 @@ const ServicesTable: React.FC = () => {
       const data: Service[] = await response.json();
       const formattedServices = data.map((service) => ({
         id: service.id.toString(),
+        date: service.date,
         driver: service.driver,
         activity: service.activity,
       }));
@@ -105,8 +108,9 @@ const ServicesTable: React.FC = () => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-            driver: driverServiceInModal,
-          activity: activityServiceInModal
+          date: dateServiceInModal,
+          driver: driverServiceInModal,
+          activity: activityServiceInModal,
         }),
       });
 
@@ -167,7 +171,7 @@ const ServicesTable: React.FC = () => {
           year: "numeric",
           month: "2-digit",
           day: "2-digit",
-        }).format(new Date(service.start));
+        }).format(new Date(service.date));
         return serviceDateStr === dateStr;
       });
       setDayServices(servicesOnDay);
@@ -175,6 +179,7 @@ const ServicesTable: React.FC = () => {
   };
 
   const handleCellClick = (info: any) => {
+    console.log(info)
     setActualDay(info.date);
     getDayServices(info.date);
     setTranslateY(0);
@@ -210,7 +215,7 @@ const ServicesTable: React.FC = () => {
           year: "numeric",
           month: "2-digit",
           day: "2-digit",
-        }).format(new Date(service.start));
+        }).format(new Date(service.date));
         return serviceDateStr === dateStr;
       });
       const serviceCount = servicesOnDay.length;
@@ -250,14 +255,17 @@ const ServicesTable: React.FC = () => {
 
   const handleServiceClick = (info: any) => {
     if (isMobile) {
+        console.log(info)
       setIdServiceInModal(info.id);
-      setDriverServiceInModal(info.title);
-      setActivityServiceInModal(dayjs(info.start));
+      setDateServiceInModal(dayjs(info.date));
+      setDriverServiceInModal(info.driver);
+      setActivityServiceInModal(info.activity);
       setActualDay(info.start);
     } else {
       setIdServiceInModal(info.event.id);
-      setDriverServiceInModal(info.event.title);
-      setActivityServiceInModal(dayjs(info.event.start));
+      setDateServiceInModal(dayjs(info.event.date));
+      setDriverServiceInModal(info.event.driver);
+      setActivityServiceInModal(info.event.activity);
       setActualDay(info.event.start);
     }
     setModalOpen(true);
@@ -312,10 +320,11 @@ const ServicesTable: React.FC = () => {
           />
         )}
         {showServiceList ? (
-          <DailyTripsPaper
-            dayTrips={dayServices}
-            updateShowTripList={updateShowServiceList}
+          <DailyEventsPaper
+            dayEvents={dayServices}
+            updateShowEventList={updateShowServiceList}
             handleEventClick={handleServiceClick}
+            isServices={true}
           />
         ) : null}
         <Box></Box>
@@ -331,8 +340,10 @@ const ServicesTable: React.FC = () => {
         drivers={drivers}
         handleSaveService={handleSaveService}
         handleDeleteService={handleDeleteService}
+        dateServiceInModal={dateServiceInModal}
         driverServiceInModal={driverServiceInModal}
         activityServiceInModal={activityServiceInModal}
+        setDateServiceInModal={setDateServiceInModal}
         setDriverServiceInModal={setDriverServiceInModal}
         setActivityServiceInModal={setActivityServiceInModal}
       />

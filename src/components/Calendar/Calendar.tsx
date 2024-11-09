@@ -16,7 +16,7 @@ import interactionPlugin from "@fullcalendar/interaction";
 import theme from "@/theme/theme";
 import "dayjs/locale/it";
 import dayjs from "dayjs";
-import DailyTripsPaper from "../DailyTripsPaper/DailyTripsPaper";
+import DailyEventsPaper from "../DailyEventsPaper/DailyEventsPaper";
 import TripModal from "../TripModal/TripModal";
 import styles from "./Calendar.module.scss";
 
@@ -348,10 +348,11 @@ const Calendar: React.FC = () => {
           />
         )}
         {showTripList ? (
-          <DailyTripsPaper
-            dayTrips={dayTrips}
-            updateShowTripList={updateShowTripList}
+          <DailyEventsPaper
+            dayEvents={dayTrips}
+            updateShowEventList={updateShowTripList}
             handleEventClick={handleEventClick}
+            isServices={false}
           />
         ) : null}
         <Box></Box>

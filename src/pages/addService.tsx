@@ -25,11 +25,6 @@ import DoneIcon from '@mui/icons-material/Done';
 import { authGuard } from "@/services/authGuard";
 import { GetServerSideProps } from "next";
 
-interface Vehicle {
-  id: number;
-  name: string;
-}
-
 interface Driver {
   id: number;
   name: string;
@@ -68,25 +63,26 @@ const AddService: React.FC = () => {
 
   const handleSaveService = async () => {
     try {
-      if (date && driver) {
+      if (date && activity && driver) {
         const response = await fetch("/api/services", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
+            date,
             driver,
             activity
           }),
         });
         if (response.ok) {
-          router.push("/");
+          router.push("/services");
         } else {
           const errorData = await response.json();
           alert(`Errore nella creazione del servizio: ${errorData.error}`);
         }
       } else {
-        alert("Compila i campi autista e attività!");
+        alert("Compila i campi data, autista e attività!");
       }
     } catch (error) {
       console.error("Errore nella chiamata POST:", error);
@@ -102,6 +98,35 @@ const AddService: React.FC = () => {
         rowGap={theme.spacing(12)}
         paddingTop={theme.spacing(12)}
       >
+        <Box>
+          <FormControl fullWidth>
+            <LocalizationProvider
+              dateAdapter={AdapterDayjs}
+              adapterLocale="it"
+              localeText={
+                itIT.components.MuiLocalizationProvider.defaultProps.localeText
+              }
+            >
+              <DateTimePicker
+                label={"Data"}
+                value={date}
+                onChange={(date) => (date ? setDate(date) : null)}
+                format="dddd - DD/MM/YYYY - hh:mm"
+                views={["day", "month", "year", "hours", "minutes"]}
+                slots={{
+                  textField: TextField,
+                }}
+                slotProps={{
+                  textField: {
+                    inputProps: {
+                      readOnly: true,
+                    },
+                  },
+                }}
+              />
+            </LocalizationProvider>
+          </FormControl>
+        </Box>
         <Box>
           <FormControl fullWidth>
             <InputLabel id="select-driver-label">Autista</InputLabel>
@@ -167,7 +192,7 @@ const AddService: React.FC = () => {
               fontSize: !isMobile ? theme.spacing(18) : 'normal'
             }}
             startIcon={<KeyboardBackspaceIcon />}
-            onClick={() => router.push('/')}
+            onClick={() => router.push('/services')}
           >
             Indietro
           </Button>

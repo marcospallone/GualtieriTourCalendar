@@ -1,6 +1,6 @@
 @import "../../styles/toRem";
 
-.tripPaper {
+.eventPaper {
   position: fixed;
   bottom: 0;
   left: 0;
@@ -19,7 +19,7 @@
     border-radius: 50%;
   }
 
-  .editTrip {
+  .editEvent {
     background-color: #f3c623;
     color: #fff;
     padding: toRem(6) toRem(12);

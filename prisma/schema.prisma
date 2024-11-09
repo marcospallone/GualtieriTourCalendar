@@ -33,6 +33,7 @@ model Driver {
 
 model Service {
   id          Int      @id @default(autoincrement())
+  date        DateTime
   driver      String
   activity    String
 }

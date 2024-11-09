@@ -1,0 +1,66 @@
+@import "../../styles/toRem";
+
+.modal {
+  padding: toRem(16);
+  width: 40%;
+  margin: auto;
+  margin-top: 10%;
+  background-color: #fff;
+  height: fit-content;
+  border-radius: toRem(16);
+
+  .modalBox:focus-visible {
+    outline: none;
+  }
+
+  .saveService {
+    background-color: #018749;
+    color: #fff;
+    padding: toRem(12) toRem(32);
+    border-radius: toRem(18);
+    font-size: large;
+    margin: auto;
+  }
+
+  .deleteService {
+    background-color: #b8001f;
+    color: #fff;
+    padding: toRem(12) toRem(32);
+
+    border-radius: toRem(18);
+    font-size: large;
+    margin: auto;
+  }
+}
+
+.mobileModal {
+  padding: 0 20px;
+  width: 100%;
+  height: 100%;
+  background-color: #fff;
+
+  .saveService {
+    background-color: #018749;
+    color: #fff;
+    padding: toRem(6) toRem(12);
+    border-radius: toRem(12);
+    font-size: small;
+    margin: auto;
+  }
+
+  .deleteService {
+    background-color: #b8001f;
+    color: #fff;
+    padding: toRem(6) toRem(12);
+    border-radius: toRem(12);
+    font-size: small;
+    margin: auto;
+  }
+}
+
+.closeModalButton {
+  background-color: #f4f6ff;
+  color: #2c3e50;
+  padding: toRem(6);
+  border-radius: 50%;
+}
