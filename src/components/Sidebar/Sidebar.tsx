@@ -1,13 +1,13 @@
 import { Box, List, ListItem, ListItemIcon, ListItemText } from "@mui/material";
 import React, { useState } from "react";
 import { useRouter } from "next/router";
-import theme from "@/theme/theme";
 import SignpostIcon from "@mui/icons-material/Signpost";
 import AirportShuttleIcon from "@mui/icons-material/AirportShuttle";
 import PersonIcon from "@mui/icons-material/Person";
 import Logo from "../Logo";
 import LogoutIcon from "@mui/icons-material/Logout";
 import styles from "./Sidebar.module.scss";
+import AssignmentIcon from '@mui/icons-material/Assignment';
 
 function Sidebar() {
   const router = useRouter();
@@ -17,6 +17,11 @@ function Sidebar() {
       label: "Viaggi",
       url: "/",
       icon: <SignpostIcon />,
+    },
+    {
+      label: "Servizi",
+      url: "/services",
+      icon: <AssignmentIcon />,
     },
     {
       label: "Veicoli",

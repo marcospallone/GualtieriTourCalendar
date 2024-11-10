@@ -255,18 +255,17 @@ const ServicesTable: React.FC = () => {
 
   const handleServiceClick = (info: any) => {
     if (isMobile) {
-        console.log(info)
       setIdServiceInModal(info.id);
       setDateServiceInModal(dayjs(info.date));
       setDriverServiceInModal(info.driver);
       setActivityServiceInModal(info.activity);
-      setActualDay(info.start);
+      setActualDay(info.date);
     } else {
       setIdServiceInModal(info.event.id);
       setDateServiceInModal(dayjs(info.event.date));
       setDriverServiceInModal(info.event.driver);
       setActivityServiceInModal(info.event.activity);
-      setActualDay(info.event.start);
+      setActualDay(info.event.date);
     }
     setModalOpen(true);
   };
