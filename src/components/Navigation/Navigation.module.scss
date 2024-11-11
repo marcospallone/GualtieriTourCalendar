@@ -11,3 +11,9 @@
     color: #2c3e50;
   }
 }
+
+@media only screen and (max-width: 992px) {
+  .navigationPaper {
+    padding-bottom: 10px;
+  }
+}
