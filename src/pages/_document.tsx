@@ -3,6 +3,7 @@ import Document, { Html, Head, Main, NextScript, DocumentContext } from 'next/do
 import createEmotionServer from '@emotion/server/create-instance';
 import theme from '../theme/theme';
 import createEmotionCache from '../createEmotionCache';
+import OneSignal from 'react-onesignal';
 
 export default class MyDocument extends Document {
   render() {

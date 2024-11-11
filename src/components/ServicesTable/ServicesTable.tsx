@@ -179,7 +179,6 @@ const ServicesTable: React.FC = () => {
   };
 
   const handleCellClick = (info: any) => {
-    console.log(info)
     setActualDay(info.date);
     getDayServices(info.date);
     setTranslateY(0);
@@ -189,15 +188,14 @@ const ServicesTable: React.FC = () => {
   };
 
   const renderServiceContent = (serviceInfo: any) => {
+    console.log(serviceInfo)
     return (
       <Box className={styles.serviceContent}>
-        <Typography variant="h6" component={"p"} color="#fff !important">
-          {serviceInfo.timeText.includes(":")
-            ? serviceInfo.timeText
-            : serviceInfo.timeText + ":00"}
+        <Typography className={styles.serviceDriver} variant="body1" component={"p"} color="#fff !important">
+          {serviceInfo.event._def.extendedProps.driver}
         </Typography>
-        <Typography variant="body1" component={"p"} color="#fff !important">
-          {serviceInfo.event.title}
+        <Typography className={styles.serviceActivity} variant="body1" component={"p"} color="#fff !important">
+        {serviceInfo.event._def.extendedProps.activity}
         </Typography>
       </Box>
     );
@@ -254,6 +252,7 @@ const ServicesTable: React.FC = () => {
   }, [dayServices]);
 
   const handleServiceClick = (info: any) => {
+    console.log(info)
     if (isMobile) {
       setIdServiceInModal(info.id);
       setDateServiceInModal(dayjs(info.date));
@@ -262,10 +261,10 @@ const ServicesTable: React.FC = () => {
       setActualDay(info.date);
     } else {
       setIdServiceInModal(info.event.id);
-      setDateServiceInModal(dayjs(info.event.date));
-      setDriverServiceInModal(info.event.driver);
-      setActivityServiceInModal(info.event.activity);
-      setActualDay(info.event.date);
+      setDateServiceInModal(dayjs(info.event.start));
+      setDriverServiceInModal(info.event.extendedProps.driver);
+      setActivityServiceInModal(info.event.extendedProps.activity);
+      setActualDay(info.event.start);
     }
     setModalOpen(true);
   };

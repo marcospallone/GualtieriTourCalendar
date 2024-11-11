@@ -5,6 +5,11 @@
   border-radius: toRem(16);
   padding: toRem(6);
   cursor: pointer;
+
+  .eventTitle{
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
 }
 
 .dayNumber {

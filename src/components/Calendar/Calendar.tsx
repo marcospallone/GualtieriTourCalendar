@@ -223,7 +223,7 @@ const Calendar: React.FC = () => {
             ? eventInfo.timeText
             : eventInfo.timeText + ":00"}
         </Typography>
-        <Typography variant="body1" component={"p"} color="#fff !important">
+        <Typography className={styles.eventTitle} variant="body1" component={"p"} color="#fff !important">
           {eventInfo.event.title}
         </Typography>
       </Box>

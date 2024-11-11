@@ -7,7 +7,7 @@ import PersonIcon from "@mui/icons-material/Person";
 import Logo from "../Logo";
 import LogoutIcon from "@mui/icons-material/Logout";
 import styles from "./Sidebar.module.scss";
-import AssignmentIcon from '@mui/icons-material/Assignment';
+import AssignmentIcon from "@mui/icons-material/Assignment";
 
 function Sidebar() {
   const router = useRouter();
@@ -65,16 +65,22 @@ function Sidebar() {
                 className={styles.menuListItem}
               >
                 <ListItemIcon
+                  className={styles.menuListItemIcon}
                   sx={{ color: index == selected ? "#EB8317" : "#fff" }}
                 >
                   {section.icon}
                 </ListItemIcon>
                 <ListItemText
+                  className={styles.menuListItemText}
                   primary={section?.label}
                   sx={{
                     "& .MuiTypography-root": {
                       fontWeight: "bold",
                       color: index == selected ? "#EB8317" : "#fff",
+
+                      "&:hover": {
+                        color: "#A8621A",
+                      },
                     },
                   }}
                 />
@@ -86,16 +92,25 @@ function Sidebar() {
           <ListItem
             onClick={handleLogout}
             sx={{ paddingLeft: 0, paddingRight: 0, cursor: "pointer" }}
+            className={styles.menuListItem}
           >
-            <ListItemIcon sx={{ color: "#fff" }}>
+            <ListItemIcon
+              className={styles.menuListItemIcon}
+              sx={{ color: "#fff" }}
+            >
               <LogoutIcon />
             </ListItemIcon>
             <ListItemText
+              className={styles.menuListItemText}
               primary={"Logout"}
               sx={{
                 "& .MuiTypography-root": {
                   fontWeight: "bold",
                   color: "#fff",
+
+                  "&:hover": {
+                    color: "#A8621A",
+                  },
                 },
               }}
             />

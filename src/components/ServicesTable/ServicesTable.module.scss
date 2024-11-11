@@ -5,6 +5,11 @@
   border-radius: toRem(16);
   padding: toRem(6);
   cursor: pointer;
+
+  .serviceDriver, .serviceActivity {
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
 }
 
 .dayNumber {
