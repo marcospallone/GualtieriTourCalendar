@@ -14,6 +14,7 @@ export default function MyApp({ Component, pageProps }: AppProps) {
       appId: 'bda99196-df09-44e8-8a96-70aaab7d9a25',
       notifyButton: {
         enable: true,
+        hideWhenSubscribed: true
       },
       allowLocalhostAsSecureOrigin: true,
     });
