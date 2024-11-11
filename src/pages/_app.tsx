@@ -13,9 +13,17 @@ export default function MyApp({ Component, pageProps }: AppProps) {
     OneSignal.init({
       appId: '52ba47df-9457-4f9d-b8cd-9c25fff35a96',
       notifyButton: {
-        enable: true,
+        enable: false,
       },
       allowLocalhostAsSecureOrigin: true,
+      
+    });
+    OneSignal.Notifications.requestPermission().then((permission:any) => {
+      if (permission === 'granted') {
+        // L'utente ha concesso il permesso
+      } else {
+        // L'utente ha negato il permesso
+      }
     });
   }, []);
   
