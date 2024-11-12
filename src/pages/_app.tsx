@@ -5,22 +5,8 @@ import theme from "../theme/theme";
 import { AppProps } from "next/app";
 import Layout from "@/components/Layout";
 import "../styles/global.scss";
-import { useEffect } from "react";
-import OneSignal from "react-onesignal";
 
 export default function MyApp({ Component, pageProps }: AppProps) {
-  useEffect(() => {
-    OneSignal.init({
-      appId: "52ba47df-9457-4f9d-b8cd-9c25fff35a96",
-      notifyButton: {
-        enable: true,
-        displayPredicate: function() {
-          return OneSignal.User.PushSubscription.optedIn ? false : true
-      },
-      },
-      allowLocalhostAsSecureOrigin: true,
-    });
-  }, []);
 
   return (
     <ThemeProvider theme={theme}>

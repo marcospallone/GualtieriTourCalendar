@@ -7,11 +7,5 @@
     "theme_color": "#000000",
     "display": "standalone",
     "icons": [
-    
-    ],
-    "permissions": [
-      {
-        "name": "notifications"
-      }
     ]
   }
