@@ -13,12 +13,13 @@ export default function MyApp({ Component, pageProps }: AppProps) {
     OneSignal.init({
       appId: "52ba47df-9457-4f9d-b8cd-9c25fff35a96",
       notifyButton: {
-        enable: false,
+        enable: true,
+        displayPredicate: function() {
+          return OneSignal.User.PushSubscription.optedIn ? false : true
       },
-      autoresubscribe: true,
+      },
       allowLocalhostAsSecureOrigin: true,
     });
-    OneSignal.Notifications.requestPermission();
   }, []);
 
   return (
