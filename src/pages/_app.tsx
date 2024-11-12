@@ -15,14 +15,13 @@ export default function MyApp({ Component, pageProps }: AppProps) {
       notifyButton: {
         enable: false,
       },
+      autoresubscribe: true,
       allowLocalhostAsSecureOrigin: true,
       
     });
     OneSignal.Notifications.requestPermission().then((permission:any) => {
       if (permission === 'granted') {
-        // L'utente ha concesso il permesso
       } else {
-        // L'utente ha negato il permesso
       }
     });
   }, []);
