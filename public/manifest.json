@@ -8,5 +8,10 @@
     "display": "standalone",
     "icons": [
     
+    ],
+    "permissions": [
+      {
+        "name": "notifications"
+      }
     ]
   }
